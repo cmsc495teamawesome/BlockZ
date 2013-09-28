@@ -17,10 +17,12 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Mesh;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
-import com.jme3.scene.debug.WireBox;
+import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Cylinder;
 import java.io.IOException;
 
 /**
@@ -35,20 +37,22 @@ public class Laser extends AbstractControl {
     //Right-click a local variable to encapsulate it with getters and setters.
     private GameBoard game;
     private static int _id = 1;
-    private ColorRGBA color = ColorRGBA.White;
+    private Material mat;
+    private ColorRGBA color = ColorRGBA.Magenta;
     
     private Vector3f position = Vector3f.ZERO;
     private Vector3f normal = Vector3f.UNIT_Y;
     
     private Geometry beam; 
     
+    private float thickness = 0.05f;
     private float boundedMaximum = 10f;
     private float boundedLength;
     
     private Ray currentRay = new Ray(Vector3f.ZERO, Vector3f.UNIT_Y);
     
     private float tickCount = 0;
-    private int tickLimit = 5;
+    private float tickLimit = 0.1f;
     
     public Laser(GameBoard g)
     {
@@ -56,78 +60,54 @@ public class Laser extends AbstractControl {
         
         game = g;
 
-        beam = new Geometry("Laser " + String.valueOf(_id), new WireBox(.1f, boundedMaximum, .1f));
+        mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+        
+        beam = new Geometry("Laser " + String.valueOf(_id++), new Box(thickness,  boundedMaximum, thickness));
 
-//        beam = new Geometry("Laser " + String.valueOf(_id), new Cylinder(4, 8, 1f, boundedMaximum));
-        
-        Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", color);
-        
-  //      beam.
-        
-        beam.setMaterial(mat);
         beam.center();
         beam.move(position);
         beam.rotateUpTo(normal);
         
-        game.getRootNode().attachChild(beam);
-        
         resizeBeam();
+        
+        game.getRootNode().attachChild(beam);
     }
     
     @Override
     protected void controlUpdate(float tpf) {
         if((tickCount += tpf) > tickLimit)
         {
-            //TODO: add code that controls Spatial,
-            //e.g. spatial.rotate(tpf,tpf,tpf);
             resizeBeam();
-            System.out.println(String.valueOf(boundedLength));
             tickCount -= tickLimit;
         }
     }
     
     public void resizeBeam()
     {
-        // 1. Reset results list.
         CollisionResults results = new CollisionResults();
         
         Spatial BlockZ = game.getRootNode().getChild("BlockZ"); 
                 
-        // 3. Collect intersections between Ray and Shootables in results list.
+        // Find intersections between Ray and BlockZ in results list.
         BlockZ.collideWith(currentRay, results);
         
-        // 4. Print the results
-        System.out.println("----- Collisions? " + results.size() + "-----");
-        for (int i = 0; i < results.size(); i++) {
-            // For each hit, we know distance, impact point, name of geometry.
-            float dist = results.getCollision(i).getDistance();
-            Vector3f pt = results.getCollision(i).getContactPoint();
-            String hit = results.getCollision(i).getGeometry().getName();
-            System.out.println("* Collision #" + i);
-            System.out.println("  You shot " + hit + " at " + pt + ", " + dist + " wu away.");
-        }
+        Material currentMat = mat.clone();
+        currentMat.setColor("Color", color);
         
         if (results.size() > 0) {
-            // The closest collision point is what was truly hit:
             CollisionResult closest = results.getClosestCollision();
             boundedLength = closest.getDistance();
-            
-            beam.setMesh(new WireBox(.1f, boundedLength, .1f));
-            
-            /*
-            Material laserMat = mat.clone();
-            laserMat.setColor("Color", laserColor);
-            laserMat.setColor("GlowColor", laserColor);
-            this.setMaterial(laserMat);
-            */
+       
+            currentMat.setColor("GlowColor", ColorRGBA.White);        
         }
         else {
             boundedLength = boundedMaximum;
+            
             //no glow
         }
         
-        
+        beam.setMesh(new Box(thickness, boundedLength, thickness));
+        beam.setMaterial(currentMat);
     }
     
     @Override

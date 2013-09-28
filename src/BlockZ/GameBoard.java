@@ -8,6 +8,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -19,6 +21,7 @@ public class GameBoard extends SimpleApplication {
     
     public static void main(String[] args) {
         GameBoard app = new GameBoard();
+        Logger.getLogger("").setLevel(Level.WARNING);
         app.start();
     }
 
@@ -50,6 +53,7 @@ public class GameBoard extends SimpleApplication {
         {
             l.update(tpf);
         }
+        rootNode.getChild("BlockZ").move(0f, .1f*tpf, 0f);
     }
 
     @Override
