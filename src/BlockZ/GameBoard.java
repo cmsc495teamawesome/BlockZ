@@ -127,35 +127,56 @@ public class GameBoard extends SimpleApplication {
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState); 
         
+        //Test BlockZ.  Remove these later
         Node BlockZ = new Node("BlockZ");
         rootNode.attachChild(BlockZ);
-        BlockZ.attachChild(makeCube("c(0,3,0)", 0f, 3f, 0f));
-        BlockZ.attachChild(makeCube("c(1,6,1)", 1f, 6f, 1f));
-        BlockZ.attachChild(makeCube("c(0,9,0)", 0f, 9f, 0f));
+        BlockZ.attachChild(makeCube("1", -8f, 6f, 0f));
+        BlockZ.attachChild(makeCube("2", -4f, 4f, 0f));
+        BlockZ.attachChild(makeCube("3", 0f, 5f, 0f));
+        BlockZ.attachChild(makeCube("4", 4f, 6f, 1f));
+        //BlockZ.attachChild(makeCube("5", 8f, 7f, 0f));
         
         createBoard();
         
-        /*
-        BlockZ.attachChild(makeCube("c(1,0,1)", 1f, 0f, 1f));
-        BlockZ.attachChild(makeCube("c(2,2,2)", 2f, 2f, 2f));
-        BlockZ.attachChild(makeCube("c(2,2,2)", 2f, 2f, 2f));
-        BlockZ.attachChild(makeCube("c(2,2,2)", 2f, 2f, 2f));
-        */
-        
-        lasers = new ArrayList<Laser>();
-        
-        
-        Laser l = new Laser(this);
-        lasers.add(l);
+        createLasers();
     }
 
+    public void createLasers()
+    {
+        lasers = new ArrayList<Laser>();
+        
+        //Equally space five lasers across the bottom of the game board.
+        for(int i = 0; i < 5; i++)
+        {
+            Laser l = new Laser(this, new Vector3f(-x + (x*0.2f) + ((float)i*x*0.4f), -y/2f, 0f));
+            switch(i)
+            {
+                case 0:
+                    l.setColor(ColorRGBA.Red);
+                    break;
+                case 1:
+                    l.setColor(ColorRGBA.Orange);
+                    break;
+                case 2:
+                    l.setColor(ColorRGBA.Yellow);
+                    break;
+                case 3:
+                    l.setColor(ColorRGBA.Green);
+                    break;
+                case 4:
+                    l.setColor(ColorRGBA.Blue);
+                    break;
+            }
+            lasers.add(l);
+        }
+    }
+    
     @Override
     public void simpleUpdate(float tpf) {
         for(Laser l : lasers)
         {
             l.update(tpf);
         }
-        rootNode.getChild("BlockZ").move(0f, .1f*tpf, 0f);
     }
 
     @Override

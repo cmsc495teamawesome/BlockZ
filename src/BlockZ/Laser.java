@@ -36,41 +36,51 @@ public class Laser extends AbstractControl {
     //appear in the SDK properties window and can be edited.
     //Right-click a local variable to encapsulate it with getters and setters.
     private GameBoard game;
-    private static int _id = 1;
+    
+    private static int _id = 0;
+    
     private Material mat;
-    private ColorRGBA color = ColorRGBA.Magenta;
-    
-    private Vector3f position = Vector3f.ZERO;
+        
+    private Vector3f position;
     private Vector3f normal = Vector3f.UNIT_Y;
-    
+        
+    private ColorRGBA color = ColorRGBA.Magenta;
     private Geometry beam; 
     
     private float thickness = 0.05f;
-    private float boundedMaximum = 10f;
+    private float boundedMaximum = 28f;
     private float boundedLength;
     
-    private Ray currentRay = new Ray(Vector3f.ZERO, Vector3f.UNIT_Y);
+    private Ray currentRay;
     
     private float tickCount = 0;
     private float tickLimit = 0.1f;
     
-    public Laser(GameBoard g)
+    public Laser(GameBoard g, Vector3f initialPosition)
     {
         super();
-        
         game = g;
+        position = initialPosition;
+        _id++;
 
         mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         
-        beam = new Geometry("Laser " + String.valueOf(_id++), new Box(thickness,  boundedMaximum, thickness));
+        beam = new Geometry("Laser " + String.valueOf(_id), new Box(thickness,  boundedMaximum/2f, thickness));
 
         beam.center();
-        beam.move(position);
+        beam.move(position.add(normal.mult(boundedMaximum/2f)));
         beam.rotateUpTo(normal);
+
+        currentRay = new Ray(position, normal);
         
         resizeBeam();
         
         game.getRootNode().attachChild(beam);
+    }
+    
+    public void setColor(ColorRGBA c)
+    {
+        color = c;
     }
     
     @Override
@@ -97,7 +107,10 @@ public class Laser extends AbstractControl {
         if (results.size() > 0) {
             CollisionResult closest = results.getClosestCollision();
             boundedLength = closest.getDistance();
-       
+            
+            System.out.println(beam.getName() + " = " + closest.getGeometry().getName() + 
+                    " @ " + String.valueOf(boundedLength) + " distance.");
+            
             currentMat.setColor("GlowColor", ColorRGBA.White);        
         }
         else {
@@ -106,8 +119,12 @@ public class Laser extends AbstractControl {
             //no glow
         }
         
-        beam.setMesh(new Box(thickness, boundedLength, thickness));
+        beam.setMesh(new Box(thickness, boundedLength/2f, thickness));
         beam.setMaterial(currentMat);
+        
+        beam.center();
+        beam.move(position.add(normal.mult(boundedLength/2f)));
+        beam.rotateUpTo(normal);       
     }
     
     @Override
@@ -117,7 +134,7 @@ public class Laser extends AbstractControl {
     }
     
     public Control cloneForSpatial(Spatial spatial) {
-        Laser control = new Laser(game);
+        Laser control = new Laser(game, position);
         //TODO: copy parameters to new Control
         control.setSpatial(spatial);
         return control;
