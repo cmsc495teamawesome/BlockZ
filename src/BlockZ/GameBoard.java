@@ -17,6 +17,13 @@ import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import com.jme3.input.controls.MouseButtonTrigger;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.MouseInput;
+import com.jme3.collision.CollisionResults;
+import com.jme3.math.Vector3f;
+import com.jme3.math.Vector2f;
+import com.jme3.math.Ray;
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -139,6 +146,8 @@ public class GameBoard extends SimpleApplication {
         createBoard();
         
         createLasers();
+        
+        initKeys();
     }
 
     public void createLasers()
@@ -183,7 +192,51 @@ public class GameBoard extends SimpleApplication {
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
     }
-
+    
+    /** Listener gameListener for player input **/
+    private ActionListener gameListener = new ActionListener() {
+        public void onAction(String name, boolean keyPressed, float tpf) {
+            //System.out.println("testing output");
+            if (keyPressed & (name.equals("Click"))) {
+                
+                // Create collisionResults array
+                CollisionResults clickResults = new CollisionResults();
+                
+                // Convert screen click to 3d position
+                Vector2f click2d = inputManager.getCursorPosition();
+                Vector3f click3d = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 0f).clone();
+                Vector3f dir = cam.getWorldCoordinates(new Vector2f(click2d.x, click2d.y), 1f).subtractLocal(click3d).normalizeLocal();
+                // Aim the ray from the clicked spot forwards.
+                Ray ray = new Ray(click3d, dir);
+                // Collect intersections between ray and all nodes in results list.
+                rootNode.collideWith(ray, clickResults);
+                
+                for (int i = 0; i < clickResults.size(); i++) {
+                    // Display object name
+                    String target = clickResults.getCollision(i).getGeometry().getName();
+                    System.out.println("Hit #" + i + ": " + target);
+                }
+            }
+        }
+    };
+    
+    /** Custom Keybinding: Create left click action */
+    private void initKeys() {
+        
+        // Disable default camera controls
+        flyCam.setEnabled(false);
+        
+        // Enable mouse cursor in game window
+        inputManager.setCursorVisible(true);
+        
+        // Map "Click" action to left mouse button
+        inputManager.addMapping("Click", new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
+        
+        // Add the name to the action listener.
+        inputManager.addListener(gameListener, "Click");
+    }
+    
+    
     /**
      * A cube object for target practice * 
      */
