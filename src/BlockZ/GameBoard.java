@@ -24,6 +24,7 @@ import com.jme3.collision.CollisionResults;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
+import java.util.Random;
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -34,6 +35,14 @@ public class GameBoard extends SimpleApplication {
     private ArrayList<Laser> lasers;
     
     float x, y, z;                      //Board dimensions
+    
+    int dropRate=50;
+    double time1=System.currentTimeMillis();
+    double time2;
+    
+    int blockIdent=1;
+    
+    Random rand;
     
     //Prepare materials
     private Material blueTrans;
@@ -143,6 +152,8 @@ public class GameBoard extends SimpleApplication {
         BlockZ.attachChild(makeCube("4", 4f, 6f, 1f));
         //BlockZ.attachChild(makeCube("5", 8f, 7f, 0f));
         
+        rand = new Random();            //Initialize random number generator
+        
         createBoard();
         
         createLasers();
@@ -180,12 +191,27 @@ public class GameBoard extends SimpleApplication {
         }
     }
     
+    public void addBlock() {
+        
+        time2 = System.currentTimeMillis();         //Get current time
+        
+        if (time2-time1 > 1000*(50/dropRate))       //If enough time has elapsed for the drop rate (needs heavy tweaking)
+        {
+            float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                            //Randomly generate position at top of board
+            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1000, pos, ColorRGBA.Red);    //Call Block constructor
+            blockIdent++;                                                                   //Increment block identifier
+            time1=System.currentTimeMillis();                                               //Reset time counter
+        }
+    }
+    
     @Override
     public void simpleUpdate(float tpf) {
         for(Laser l : lasers)
         {
             l.update(tpf);
         }
+        
+        addBlock();
     }
 
     @Override
