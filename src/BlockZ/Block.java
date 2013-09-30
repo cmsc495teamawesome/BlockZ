@@ -21,6 +21,7 @@ public class Block  {
     float[] position;
     ColorRGBA color;
     
+    private Geometry block;    
     private GameBoard game;
     private BulletAppState bulletAppState;        
     private RigidBodyControl block_phy;
@@ -36,7 +37,7 @@ public class Block  {
         game=g;
         bulletAppState=b;        
         
-        Geometry block = new Geometry(name, new Box(size, size, size));
+        block = new Geometry(name, new Box(size, size, size));
         Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", col);
         block.setMaterial(mat);
@@ -48,5 +49,10 @@ public class Block  {
         bulletAppState.getPhysicsSpace().add(block_phy);
         
     }  
+    
+    public void removeBlock() {
+        game.getRootNode().detachChild(block);
+        bulletAppState.getPhysicsSpace().remove(block_phy);
+    }
     
 }

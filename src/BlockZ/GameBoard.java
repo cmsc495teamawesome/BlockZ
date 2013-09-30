@@ -37,12 +37,13 @@ public class GameBoard extends SimpleApplication {
     float x, y, z;                      //Board dimensions
     
     int dropRate=50;
-    double time1=System.currentTimeMillis();
-    double time2;
+    double time1=System.currentTimeMillis();    
     
-    int blockIdent=1;
+    int blockIdent=0;
     
     Random rand;
+    
+    ArrayList<Block> blockList;
     
     //Prepare materials
     private Material blueTrans;
@@ -152,6 +153,7 @@ public class GameBoard extends SimpleApplication {
         BlockZ.attachChild(makeCube("4", 4f, 6f, 1f));
         //BlockZ.attachChild(makeCube("5", 8f, 7f, 0f));
         
+        blockList = new ArrayList();
         rand = new Random();            //Initialize random number generator
         
         createBoard();
@@ -193,15 +195,23 @@ public class GameBoard extends SimpleApplication {
     
     public void addBlock() {
         
-        time2 = System.currentTimeMillis();         //Get current time
-        
-        if (time2-time1 > 1000*(50/dropRate))       //If enough time has elapsed for the drop rate (needs heavy tweaking)
+        if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))       //If enough time has elapsed for the drop rate (needs heavy tweaking)
         {
             float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                            //Randomly generate position at top of board
-            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1000, pos, ColorRGBA.Red);    //Call Block constructor
+            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor
+            blockList.add(block1);                                                          //Add block to array list
             blockIdent++;                                                                   //Increment block identifier
             time1=System.currentTimeMillis();                                               //Reset time counter
         }
+    }
+    
+    //Gets Block by removing "Block " from string and using remaining number as index in ArrayList of Blocks
+    public Block getBlock(String name) {
+        
+        int blockNum = Integer.parseInt(name.substring(6));        
+        System.out.println(blockNum);
+        
+        return blockList.get(blockNum);
     }
     
     @Override
@@ -236,6 +246,10 @@ public class GameBoard extends SimpleApplication {
                 Ray ray = new Ray(click3d, dir);
                 // Collect intersections between ray and all nodes in results list.
                 rootNode.collideWith(ray, clickResults);
+                
+                //Test code for removing blocks on click
+                if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
+                    getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();                
                 
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
