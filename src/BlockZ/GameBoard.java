@@ -3,16 +3,14 @@ package BlockZ;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
-import com.jme3.math.Quaternion;
-import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -21,6 +19,7 @@ import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.MouseInput;
 import com.jme3.collision.CollisionResults;
+import com.jme3.font.BitmapText;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
@@ -31,6 +30,8 @@ import java.util.Random;
  * CMSC495-6380 Professor Hung Dao
  */
 public class GameBoard extends SimpleApplication {    
+    
+    private BitmapText hudText;
     
     private ArrayList<Laser> lasers;
     
@@ -151,6 +152,8 @@ public class GameBoard extends SimpleApplication {
         
         createLasers();
         
+        setupDebugText();
+        
         initKeys();
     }
 
@@ -165,10 +168,10 @@ public class GameBoard extends SimpleApplication {
             switch(i)
             {
                 case 0:
-                    l.setColor(ColorRGBA.Red);
+                    l.setColor(ColorRGBA.Magenta);
                     break;
                 case 1:
-                    l.setColor(ColorRGBA.Orange);
+                    l.setColor(ColorRGBA.Red);
                     break;
                 case 2:
                     l.setColor(ColorRGBA.Yellow);
@@ -205,14 +208,48 @@ public class GameBoard extends SimpleApplication {
         return blockList.get(blockNum);
     }
     
+    private void setupDebugText()
+    {
+        hudText = new BitmapText(guiFont, false);
+        hudText.setSize(guiFont.getCharSet().getRenderedSize());      
+        hudText.setColor(ColorRGBA.Blue);                             
+        String debugText = new String("");
+        
+        /*
+        for(Laser l:lasers)
+        {
+            CollisionResult currentTarget = l.getTarget();
+            debugText = debugText.concat((currentTarget!=null)?currentTarget.getGeometry(). + "\t\t":"\t\t");
+        }
+        */
+        
+        
+
+        hudText.setText(debugText);             // the text
+        hudText.setLocalTranslation(300, hudText.getLineHeight(), 0); 
+        guiNode.attachChild(hudText);
+    }
+    
     @Override
     public void simpleUpdate(float tpf) {
         for(Laser l : lasers)
         {
             l.update(tpf);
         }
-        
+        updatePlayHandButton();
         addBlock();
+    }
+    
+    private void updatePlayHandButton()
+    {
+        String debugText = new String("");
+        for(Laser l:lasers)
+        {
+            CollisionResult currentTarget = l.getTarget();
+            debugText = debugText.concat(currentTarget!=null?currentTarget.getGeometry().getName():"Whoops");
+        }
+
+        hudText.setText(debugText);             // the text
     }
 
     @Override
@@ -265,19 +302,5 @@ public class GameBoard extends SimpleApplication {
         
         // Add the name to the action listener.
         inputManager.addListener(gameListener, "Click");
-    }
-    
-    
-    /**
-     * A cube object for target practice * 
-     */
-    protected Geometry makeCube(String name, float x, float y, float z) {
-        Box box = new Box(1, 1, 1);
-        Geometry cube = new Geometry(name, box);
-        cube.setLocalTranslation(x, y, z);
-        Material mat1 = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
-        mat1.setColor("Color", ColorRGBA.randomColor());
-        cube.setMaterial(mat1);
-        return cube;
     }
 }

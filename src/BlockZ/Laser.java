@@ -17,12 +17,11 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
+import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import com.jme3.scene.shape.Box;
-import com.jme3.scene.shape.Cylinder;
 import java.io.IOException;
 
 /**
@@ -36,6 +35,8 @@ public class Laser extends AbstractControl {
     //appear in the SDK properties window and can be edited.
     //Right-click a local variable to encapsulate it with getters and setters.
     private GameBoard game;
+    private static Node LaserZ = new Node("LaserZ");
+    private CollisionResult currentTarget;
     
     private static int _id = 0;
     
@@ -76,12 +77,18 @@ public class Laser extends AbstractControl {
         
         resizeBeam();
         
-        game.getRootNode().attachChild(beam);
+        LaserZ.attachChild(beam);
+        game.getRootNode().attachChild(LaserZ);
     }
     
     public void setColor(ColorRGBA c)
     {
         color = c;
+    }
+    
+    public CollisionResult getTarget()
+    {
+        return currentTarget;
     }
     
     @Override
@@ -93,7 +100,7 @@ public class Laser extends AbstractControl {
         }
     }
     
-    public void resizeBeam()
+    private void resizeBeam()
     {
         CollisionResults results = new CollisionResults();
         
@@ -108,10 +115,10 @@ public class Laser extends AbstractControl {
         currentMat.setColor("Color", color);
         
         if (results.size() > 0) {
-            CollisionResult closest = results.getClosestCollision();
-            boundedLength = closest.getDistance();
+            currentTarget = results.getClosestCollision();
+            boundedLength = currentTarget.getDistance();
             
-            System.out.println(beam.getName() + " = " + closest.getGeometry().getName() + 
+            System.out.println(beam.getName() + " = " + currentTarget.getGeometry().getName() + 
                     " @ " + String.valueOf(boundedLength) + " distance.");
             
             currentMat.setColor("GlowColor", ColorRGBA.White);        
