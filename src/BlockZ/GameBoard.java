@@ -226,7 +226,7 @@ public class GameBoard extends SimpleApplication {
         
 
         hudText.setText(debugText);             // the text
-        hudText.setLocalTranslation(300, hudText.getLineHeight(), 0); 
+        hudText.setLocalTranslation(275, hudText.getLineHeight(), 0); 
         guiNode.attachChild(hudText);
     }
     
@@ -236,17 +236,17 @@ public class GameBoard extends SimpleApplication {
         {
             l.update(tpf);
         }
-        updatePlayHandButton();
+        playHand();
         addBlock();
     }
     
-    private void updatePlayHandButton()
+    private void playHand()
     {
         String debugText = new String("");
         for(Laser l:lasers)
         {
             CollisionResult currentTarget = l.getTarget();
-            debugText = debugText.concat(currentTarget!=null?currentTarget.getGeometry().getName():"Whoops");
+            debugText = debugText.concat(currentTarget!=null?currentTarget.getGeometry().getName() + " \t ":" Empty\t ");
         }
 
         hudText.setText(debugText);             // the text

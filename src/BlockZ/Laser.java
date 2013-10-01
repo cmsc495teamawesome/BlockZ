@@ -125,7 +125,7 @@ public class Laser extends AbstractControl {
         }
         else {
             boundedLength = boundedMaximum;
-            
+            currentTarget = null;
             //no glow
         }
         
