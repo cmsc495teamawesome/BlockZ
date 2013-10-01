@@ -37,6 +37,7 @@ public class Laser extends AbstractControl {
     private GameBoard game;
     private static Node LaserZ = new Node("LaserZ");
     private CollisionResult currentTarget;
+    private Boolean hasTarget = false;
     
     private static int _id = 0;
     
@@ -91,6 +92,25 @@ public class Laser extends AbstractControl {
         return currentTarget;
     }
     
+    public int getBlock()
+    {
+        Block returnBlock;
+        
+        if(currentTarget == null)
+        {
+            return 0;
+        }
+        else 
+        {
+            return currentTarget.getGeometry().getUserData("Value");
+        }
+    }
+    
+    public Boolean hasTarget()
+    {
+        return hasTarget;
+    }
+    
     @Override
     protected void controlUpdate(float tpf) {
         if((tickCount += tpf) > tickLimit)
@@ -116,17 +136,15 @@ public class Laser extends AbstractControl {
         
         if (results.size() > 0) {
             currentTarget = results.getClosestCollision();
+            hasTarget = true;
             boundedLength = currentTarget.getDistance();
-            
-            System.out.println(beam.getName() + " = " + currentTarget.getGeometry().getName() + 
-                    " @ " + String.valueOf(boundedLength) + " distance.");
-            
-            currentMat.setColor("GlowColor", ColorRGBA.White);        
+            currentMat.setColor("GlowColor", ColorRGBA.White);
         }
         else {
-            boundedLength = boundedMaximum;
             currentTarget = null;
-            //no glow
+            boundedLength = boundedMaximum;
+            hasTarget = false;
+            currentMat.setColor("GlowColor", ColorRGBA.BlackNoAlpha);
         }
         
         beam.setMesh(new Box(thickness, boundedLength/2f, thickness));

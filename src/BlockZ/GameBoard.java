@@ -29,11 +29,11 @@ import java.util.Random;
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
  */
-public class GameBoard extends SimpleApplication {    
+public class GameBoard extends SimpleApplication { 
     
     private BitmapText hudText;
     
-    private ArrayList<Laser> lasers;
+    ArrayList<Laser> lasers;
     
     float x, y, z;                      //Board dimensions
     
@@ -152,7 +152,7 @@ public class GameBoard extends SimpleApplication {
         
         createLasers();
         
-        setupDebugText();
+        //setupDebugText();
         
         initKeys();
     }
@@ -223,8 +223,6 @@ public class GameBoard extends SimpleApplication {
         }
         */
         
-        
-
         hudText.setText(debugText);             // the text
         hudText.setLocalTranslation(275, hudText.getLineHeight(), 0); 
         guiNode.attachChild(hudText);
@@ -242,14 +240,7 @@ public class GameBoard extends SimpleApplication {
     
     private void playHand()
     {
-        String debugText = new String("");
-        for(Laser l:lasers)
-        {
-            CollisionResult currentTarget = l.getTarget();
-            debugText = debugText.concat(currentTarget!=null?currentTarget.getGeometry().getName() + " \t ":" Empty\t ");
-        }
-
-        hudText.setText(debugText);             // the text
+        new HandEvaluator(this).getHand();
     }
 
     @Override

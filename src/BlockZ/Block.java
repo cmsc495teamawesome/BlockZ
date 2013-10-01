@@ -44,6 +44,7 @@ public class Block  {
         Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", col);
         block.setMaterial(mat);
+        block.setUserData("Value", 1);
         blockNode.attachChild(block);
         game.getRootNode().attachChild(blockNode);
         block.setLocalTranslation(pos[0], pos[1], pos[2]);        

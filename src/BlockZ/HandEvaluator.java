@@ -4,17 +4,15 @@
  */
 package BlockZ;
 
-import com.jme3.collision.CollisionResult;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
+import java.util.HashMap;
 
 /**
  *
  * @author tuc
  */
 public class HandEvaluator {
-    private GameBoard game;
-    
+        
     public enum hands {
         BlockZ,
         FourOfAKind,
@@ -26,10 +24,19 @@ public class HandEvaluator {
     }
     
     public class HandResult {
-        public int scoreChange = 0;
-        public int descentChange = 0;
-        public hands hand = hands.Chance;
-    } 
+        public int scoreChange;
+        public int descentChange;
+        public hands hand;
+        
+        public HandResult(int s, int d, hands h)
+        {
+            scoreChange = s;
+            descentChange = d;
+            hand = h;
+        }
+    }
+    
+    private GameBoard game; 
     
     public HandEvaluator(GameBoard g)
     {
@@ -37,13 +44,57 @@ public class HandEvaluator {
     }
     
     public HandResult getHand()
-    {
-        String debugText = new String("");
-        Node lasers = (Node)game.getRootNode().getChild("LaserZ");
-       
-        // TODO: evaluate the hand and return a value
+    {   
+        HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
         
-        HandResult result = new HandResult();
-        return result;
+        for(Laser l:game.lasers)
+        {
+            int value = l.getBlock();
+            if(value != 0)
+            {
+                if(values.containsKey(value)) values.put(value, values.get(value));
+                else values.put(value, 1);
+            }
+            System.out.print(Integer.toString(value));
+        }
+        
+        System.out.println();
+        
+        return blockZ();
+    }
+    
+    private HandResult blockZ()
+    {
+        return new HandResult(20000, -20, hands.BlockZ);
+    }
+    
+    private HandResult fourOfAKind()
+    {
+        return new HandResult(15000, -15, hands.FourOfAKind);
+    }
+    
+    private HandResult fullHouse()
+    {
+        return new HandResult(1000, -10, hands.FullHouse);
+    }
+    
+    private HandResult threeOfAKind()
+    {
+        return new HandResult(5000, -5, hands.ThreeOfAKind);
+    }
+    
+    private HandResult largeStraight()
+    {
+        return new HandResult(10000, -15, hands.LargeStraight);
+    }
+    
+    private HandResult smallStraight()
+    {
+        return new HandResult(0, 0, hands.SmallStraight);
+    }
+    
+    private HandResult chance()
+    {
+        return new HandResult(0, 5, hands.Chance);
     }
 }
