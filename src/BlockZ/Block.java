@@ -6,6 +6,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Geometry;
+import com.jme3.scene.Node;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.shape.Box;
 
@@ -14,6 +15,8 @@ import com.jme3.scene.shape.Box;
  * @author Greg
  */
 public class Block  {
+    
+    public static Node blockNode = new Node();
     
     int size; 
     String name;
@@ -41,7 +44,8 @@ public class Block  {
         Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         mat.setColor("Color", col);
         block.setMaterial(mat);
-        game.getRootNode().attachChild(block);
+        blockNode.attachChild(block);
+        game.getRootNode().attachChild(blockNode);
         block.setLocalTranslation(pos[0], pos[1], pos[2]);        
         block_phy = new RigidBodyControl(1f);
         block_phy.setMass(mass);
@@ -51,7 +55,7 @@ public class Block  {
     }  
     
     public void removeBlock() {
-        game.getRootNode().detachChild(block);
+        blockNode.detachChild(block);
         bulletAppState.getPhysicsSpace().remove(block_phy);
     }
     
