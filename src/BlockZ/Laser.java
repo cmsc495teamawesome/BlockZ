@@ -70,6 +70,7 @@ public class Laser extends AbstractControl {
         beam.center();
         beam.move(position.add(normal.mult(boundedMaximum/2f)));
         beam.rotateUpTo(normal);
+        beam.setMaterial(mat);
 
         currentRay = new Ray(position, normal);
         
@@ -98,6 +99,8 @@ public class Laser extends AbstractControl {
         
         Spatial BlockZ = game.getRootNode().getChild("BlockZ"); 
                 
+        if(BlockZ==null) return;
+        
         // Find intersections between Ray and BlockZ in results list.
         BlockZ.collideWith(currentRay, results);
         

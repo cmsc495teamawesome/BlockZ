@@ -16,7 +16,7 @@ import com.jme3.scene.shape.Box;
  */
 public class Block  {
     
-    public static Node blockNode = new Node();
+    public static Node blockNode = new Node("BlockZ");
     
     int size; 
     String name;
