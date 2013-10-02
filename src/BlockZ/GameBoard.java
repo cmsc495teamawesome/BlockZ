@@ -3,7 +3,6 @@ package BlockZ;
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.collision.CollisionResult;
 import com.jme3.material.Material;
 import com.jme3.material.RenderState;
 import com.jme3.math.ColorRGBA;
@@ -23,6 +22,7 @@ import com.jme3.font.BitmapText;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
+import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -38,7 +38,10 @@ public class GameBoard extends SimpleApplication {
     float x, y, z;                      //Board dimensions
     
     int dropRate=50;
-    double time1=System.currentTimeMillis();    
+    double time1=System.currentTimeMillis(); 
+    
+    long score = 0;
+    int rateOfDescent = 0;
     
     int blockIdent=0;
     
@@ -238,9 +241,41 @@ public class GameBoard extends SimpleApplication {
         addBlock();
     }
     
+    public void updateRateOfDescent(int change)
+    {
+        rateOfDescent += change;
+        if(rateOfDescent < 0) rateOfDescent = 0;
+        if(rateOfDescent > 100) rateOfDescent = 100;
+    }
+    
     private void playHand()
     {
-        new HandEvaluator(this).getHand();
+        HandEvaluator.HandResult hand = new HandEvaluator(this).getHand();
+        
+        score += hand.scoreChange;
+        
+        updateRateOfDescent(hand.descentChange);
+        
+        // Handle the various hands returned by the hand evaluator for specific behavior
+        switch(hand.hand)
+        {
+            case BlockZ:
+                break;
+            case FourOfAKind:
+                break;
+            case FullHouse:
+                break;
+            case ThreeOfAKind:
+                break;
+            case LargeStraight:
+                break;
+            case SmallStraight:
+                break;
+            case Chance:
+                break;
+        }
+        
+        System.out.println(hand.hand.toString());
     }
 
     @Override

@@ -4,8 +4,8 @@
  */
 package BlockZ;
 
-import com.jme3.scene.Node;
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -26,6 +26,7 @@ public class HandEvaluator {
     public class HandResult {
         public int scoreChange;
         public int descentChange;
+        public int houseValue;
         public hands hand;
         
         public HandResult(int s, int d, hands h)
@@ -33,6 +34,7 @@ public class HandEvaluator {
             scoreChange = s;
             descentChange = d;
             hand = h;
+            houseValue = 0;
         }
     }
     
@@ -52,7 +54,7 @@ public class HandEvaluator {
             int value = l.getBlock();
             if(value != 0)
             {
-                if(values.containsKey(value)) values.put(value, values.get(value));
+                if(values.containsKey(value)) values.put(value, values.get(value)+1);
                 else values.put(value, 1);
             }
             System.out.print(Integer.toString(value));
@@ -60,7 +62,62 @@ public class HandEvaluator {
         
         System.out.println();
         
-        return blockZ();
+        if(values.containsValue(5)) 
+        {
+            return blockZ();
+        }
+        
+        if(values.containsValue(4))
+        {
+            return fourOfAKind();
+        }
+        
+        if(values.containsValue(3) && values.containsValue(2))
+        {
+            int houseValue = 0;
+            for(Map.Entry entry:values.entrySet())
+            {
+                houseValue += ((Integer)entry.getKey())*((Integer)entry.getValue());
+            }
+            return fullHouse(houseValue);
+        }
+        
+        if(values.containsValue(3))
+        {
+            return threeOfAKind();
+        }
+        
+        if(values.containsKey(1)&&values.containsKey(2)&&values.containsKey(3)
+                &&values.containsKey(4)&&values.containsKey(5))
+        {
+            return largeStraight();
+        }
+        
+        if(values.containsKey(2)&&values.containsKey(3)&&values.containsKey(4)
+                &&values.containsKey(5)&&values.containsKey(6))
+        {
+            return largeStraight();
+        }
+        
+        if(values.containsKey(1)&&values.containsKey(2)
+                &&values.containsKey(3)&&values.containsKey(4))
+        {
+            return smallStraight();
+        }
+        
+        if(values.containsKey(2)&&values.containsKey(3)
+                &&values.containsKey(4)&&values.containsKey(5))
+        {
+            return smallStraight();
+        }
+        
+        if(values.containsKey(3)&&values.containsKey(4)
+                &&values.containsKey(5)&&values.containsKey(6))
+        {
+            return smallStraight();
+        }
+        
+        return chance();
     }
     
     private HandResult blockZ()
@@ -73,9 +130,11 @@ public class HandEvaluator {
         return new HandResult(15000, -15, hands.FourOfAKind);
     }
     
-    private HandResult fullHouse()
+    private HandResult fullHouse(int value)
     {
-        return new HandResult(1000, -10, hands.FullHouse);
+        HandResult hr = new HandResult(1000, -10, hands.FullHouse);
+        hr.houseValue = value;
+        return hr;
     }
     
     private HandResult threeOfAKind()
