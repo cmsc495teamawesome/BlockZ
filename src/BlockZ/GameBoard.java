@@ -256,7 +256,9 @@ public class GameBoard extends SimpleApplication {
         
         updateRateOfDescent(hand.descentChange);
         
-        // Handle the various hands returned by the hand evaluator for specific behavior
+        System.out.println(" = " + hand.hand.toString());
+        
+        // TODO: Handle the various hands returned by the hand evaluator for specific behavior
         switch(hand.hand)
         {
             case BlockZ:
@@ -273,9 +275,11 @@ public class GameBoard extends SimpleApplication {
                 break;
             case Chance:
                 break;
-        }
+            case NotAHand:
+                return;
+        }        
         
-        System.out.println(hand.hand.toString());
+        // TODO: Remove hand
     }
 
     @Override

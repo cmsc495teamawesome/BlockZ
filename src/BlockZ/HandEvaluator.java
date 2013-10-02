@@ -20,7 +20,8 @@ public class HandEvaluator {
         ThreeOfAKind,
         LargeStraight,
         SmallStraight,
-        Chance
+        Chance,
+        NotAHand
     }
     
     public class HandResult {
@@ -52,16 +53,19 @@ public class HandEvaluator {
         for(Laser l:game.lasers)
         {
             int value = l.getBlock();
+            System.out.print(Integer.toString(value));
+
             if(value != 0)
             {
                 if(values.containsKey(value)) values.put(value, values.get(value)+1);
                 else values.put(value, 1);
             }
-            System.out.print(Integer.toString(value));
+            else
+            {
+                return notAHand();
+            }
         }
-        
-        System.out.println();
-        
+                
         if(values.containsValue(5)) 
         {
             return blockZ();
@@ -155,5 +159,10 @@ public class HandEvaluator {
     private HandResult chance()
     {
         return new HandResult(0, 5, hands.Chance);
+    }
+    
+    private HandResult notAHand()
+    {
+        return new HandResult(0, 0, hands.NotAHand);
     }
 }
