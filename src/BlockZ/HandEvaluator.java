@@ -4,6 +4,7 @@
  */
 package BlockZ;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ public class HandEvaluator {
         public int descentChange;
         public int houseValue;
         public hands hand;
+        public ArrayList<Block> handBlocks; 
         
         public HandResult(int s, int d, hands h)
         {
@@ -36,10 +38,17 @@ public class HandEvaluator {
             descentChange = d;
             hand = h;
             houseValue = 0;
+            handBlocks = blocks;
+        }
+        
+        public void addBlock(Block b)
+        {
+            blocks.add(b);
         }
     }
     
     private GameBoard game; 
+    private ArrayList<Block> blocks;
     
     public HandEvaluator(GameBoard g)
     {
@@ -48,22 +57,31 @@ public class HandEvaluator {
     
     public HandResult getHand()
     {   
+        blocks = new ArrayList<Block>();
+        
         HashMap<Integer, Integer> values = new HashMap<Integer, Integer>();
         
         for(Laser l:game.lasers)
         {
-            int value = l.getBlock();
-            System.out.print(Integer.toString(value));
+            int value = l.getBlockValue();
 
             if(value != 0)
             {
-                if(values.containsKey(value)) values.put(value, values.get(value)+1);
-                else values.put(value, 1);
+                if(values.containsKey(value)) 
+                {
+                    values.put(value, values.get(value)+1);
+                }
+                else 
+                {
+                    values.put(value, 1);
+                }
             }
             else
             {
                 return notAHand();
             }
+            
+            blocks.add(game.getBlock(l.getTarget()));
         }
                 
         if(values.containsValue(5)) 

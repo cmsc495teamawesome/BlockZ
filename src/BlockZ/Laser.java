@@ -87,12 +87,19 @@ public class Laser extends AbstractControl {
         color = c;
     }
     
-    public CollisionResult getTarget()
+    public String getTarget()
     {
-        return currentTarget;
+        if(currentTarget != null)
+        {
+            return currentTarget.getGeometry().getName();
+        }
+        else 
+        {
+            return "";
+        }
     }
     
-    public int getBlock()
+    public int getBlockValue()
     {
         Block returnBlock;
         

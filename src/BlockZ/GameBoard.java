@@ -22,7 +22,6 @@ import com.jme3.font.BitmapText;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
-import java.math.BigInteger;
 import java.util.Random;
 
 /**
@@ -35,13 +34,15 @@ public class GameBoard extends SimpleApplication {
     
     ArrayList<Laser> lasers;
     
+    private Object playHandLock = new Object();
+    private float playHandCounter = 0f;
+    
     float x, y, z;                      //Board dimensions
     
     int dropRate=50;
     double time1=System.currentTimeMillis(); 
     
     long score = 0;
-    int rateOfDescent = 0;
     
     int blockIdent=0;
     
@@ -155,7 +156,7 @@ public class GameBoard extends SimpleApplication {
         
         createLasers();
         
-        //setupDebugText();
+        setupDebugText();
         
         initKeys();
     }
@@ -206,7 +207,7 @@ public class GameBoard extends SimpleApplication {
     public Block getBlock(String name) {
         
         int blockNum = Integer.parseInt(name.substring(6));        
-        System.out.println(blockNum);
+        //System.out.println(blockNum);
         
         return blockList.get(blockNum);
     }
@@ -221,8 +222,8 @@ public class GameBoard extends SimpleApplication {
         /*
         for(Laser l:lasers)
         {
-            CollisionResult currentTarget = l.getTarget();
-            debugText = debugText.concat((currentTarget!=null)?currentTarget.getGeometry(). + "\t\t":"\t\t");
+            String currentTarget = l.getTarget();
+            debugText = debugText.concat((!currentTarget.equals(""))?currentTarget + "\t\t":"\t\t");
         }
         */
         
@@ -237,49 +238,66 @@ public class GameBoard extends SimpleApplication {
         {
             l.update(tpf);
         }
-        playHand();
+        
+        playHandCounter += tpf;
+        if (playHandCounter > .5f) {
+            playHand();
+            playHandCounter -= .5f;
+        }
+        
         addBlock();
     }
     
-    public void updateRateOfDescent(int change)
+    public void updateDropRate(int change)
     {
-        rateOfDescent += change;
-        if(rateOfDescent < 0) rateOfDescent = 0;
-        if(rateOfDescent > 100) rateOfDescent = 100;
+        // TODO: Implement when drop rate is tweaked - stubbed out for now.
+        /* 
+        dropRate += change;
+        if(dropRate < 0) dropRate = 0;
+        if(dropRate > 100) dropRate = 100;
+        */ 
     }
     
     private void playHand()
     {
-        HandEvaluator.HandResult hand = new HandEvaluator(this).getHand();
-        
-        score += hand.scoreChange;
-        
-        updateRateOfDescent(hand.descentChange);
-        
-        System.out.println(" = " + hand.hand.toString());
-        
-        // TODO: Handle the various hands returned by the hand evaluator for specific behavior
-        switch(hand.hand)
-        {
-            case BlockZ:
-                break;
-            case FourOfAKind:
-                break;
-            case FullHouse:
-                break;
-            case ThreeOfAKind:
-                break;
-            case LargeStraight:
-                break;
-            case SmallStraight:
-                break;
-            case Chance:
-                break;
-            case NotAHand:
-                return;
-        }        
-        
-        // TODO: Remove hand
+        synchronized (playHandLock) {
+            HandEvaluator.HandResult hand = new HandEvaluator(this).getHand();
+
+            score += hand.scoreChange;
+            updateDropRate(hand.descentChange);
+
+            // TODO: Update HUD
+
+            // TODO: Handle the various hands returned by the hand evaluator for specific behavior
+            switch (hand.hand) {
+                case BlockZ:
+                    break;
+                case FourOfAKind:
+                    break;
+                case FullHouse:
+                    break;
+                case ThreeOfAKind:
+                    break;
+                case LargeStraight:
+                    break;
+                case SmallStraight:
+                    break;
+                case Chance:
+                    break;
+                case NotAHand:
+                    return;
+            }
+
+            
+            System.out.println("Score = " + String.valueOf(score));
+            System.out.println("Rate Of Descent = " + String.valueOf(dropRate));
+            System.out.println(hand.hand.toString());
+
+            for (Block b : hand.handBlocks) {
+                b.removeBlock();
+            }
+
+        }
     }
 
     @Override
@@ -304,6 +322,8 @@ public class GameBoard extends SimpleApplication {
                 Ray ray = new Ray(click3d, dir);
                 // Collect intersections between ray and all nodes in results list.
                 rootNode.collideWith(ray, clickResults);
+            
+                if(clickResults.size()==0) return;
                 
                 //Test code for removing blocks on click
                 if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
