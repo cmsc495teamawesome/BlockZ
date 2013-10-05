@@ -221,8 +221,8 @@ public class GameBoard extends SimpleApplication {
         
         if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
         {
-<<<<<<< HEAD
-            float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                //Randomly generate position at top of board
+
+            float[] pos = {(float)rand.nextInt((int)x)-5+xOffset, y, 0};                //Randomly generate position at top of board
             
             //1 in 4 chance of making explosive, to be tweaked
             if (rand.nextInt(4)+1 == 1) {
@@ -235,13 +235,8 @@ public class GameBoard extends SimpleApplication {
                 blockList.add(block1);                                                          //Add block to array list
                 blockIdent++;                                                                   //Increment block identifier
             }
-            
-=======
-            float[] pos = {(float)rand.nextInt((int)x)-5+xOffset, y, 0};                            //Randomly generate position at top of board
-            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor
-            blockList.add(block1);                                                          //Add block to array list
-            blockIdent++;                                                                   //Increment block identifier
->>>>>>> origin/gameStructure
+                                                                       //Increment block identifier
+
             time1=System.currentTimeMillis();                                               //Reset time counter
         }
     }
@@ -395,20 +390,7 @@ public class GameBoard extends SimpleApplication {
                 }
                 
                 //Test code for removing blocks on click
-<<<<<<< HEAD
-                if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
-                    getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();              
-                
-                //Test code for detonating explosives on click
-                if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Explo")) {
-                    getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();      
-                    detonatedList.add(getExplosive(clickResults.getCollision(2).getGeometry().getName()));  //Add to detonated list
-                    detonatedTime.add(System.currentTimeMillis());  //Add current time to detonation time list
-                    detonatedIdent++;
-                    
-                }
-                    
-=======
+
                 if (clickResults.size() > 1)
                 {
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
@@ -416,9 +398,17 @@ public class GameBoard extends SimpleApplication {
                         getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();
                         hud.displayMessage("Clicky clicky.");
                         score+=10;  //Temporary score to test HUD
-                    }                
+                    }
+                    
+                    //Test code for detonating explosives on click
+                    if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Explo")) {
+                        getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();      
+                        detonatedList.add(getExplosive(clickResults.getCollision(2).getGeometry().getName()));  //Add to detonated list
+                        detonatedTime.add(System.currentTimeMillis());  //Add current time to detonation time list
+                        detonatedIdent++;
+                    }
                 }
->>>>>>> origin/gameStructure
+
                 
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
