@@ -55,6 +55,9 @@ public class GameBoard extends SimpleApplication {
     
     ArrayList<Block> blockList;
     
+    //Create GameButtons
+    private GameButton playHandButton;
+    
     //Prepare materials
     private Material blueTrans;
     
@@ -63,7 +66,7 @@ public class GameBoard extends SimpleApplication {
     private static Geometry leftWall;
     private static Geometry rightWall;
     private static Geometry frontWall;
-    private static Geometry backWall;    
+    private static Geometry backWall;
     
     //Prepare physics application state
     private BulletAppState bulletAppState;    
@@ -137,6 +140,7 @@ public class GameBoard extends SimpleApplication {
         
         hud = new GameHUD(this, score, 0, dropRate);
         
+        playHandButton = new GameButton(this, bulletAppState, "PlayHand", 5, -11, 3, 1, true);
     }
     
     public Geometry makeFace(String name, float x, float y) {
@@ -165,6 +169,8 @@ public class GameBoard extends SimpleApplication {
         createBoard();
         
         createLasers();
+        
+        
         
         setupDebugText();
         
@@ -249,14 +255,17 @@ public class GameBoard extends SimpleApplication {
             l.update(tpf);
         }
         
+        // Update HUD stats and display
+        hud.updateScore(score);
+        hud.updateRate(dropRate);
         hud.update(tpf);
         
-        playHandCounter += tpf;
+       /* playHandCounter += tpf;
         if (playHandCounter > .5f) {
             playHand();
             playHandCounter -= .5f;
         }
-        
+        */
         addBlock();
     }
     
@@ -303,7 +312,7 @@ public class GameBoard extends SimpleApplication {
             
             System.out.println("Score = " + String.valueOf(score));
             System.out.println("Rate Of Descent = " + String.valueOf(dropRate));
-            System.out.println(hand.hand.toString());
+            hud.displayMessage(hand.hand.toString());
 
             for (Block b : hand.handBlocks) {
                 b.removeBlock();
@@ -337,19 +346,29 @@ public class GameBoard extends SimpleApplication {
             
                 if(clickResults.size()==0) return;
                 
-                //Test code for removing blocks on click
-                if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
+                if (clickResults.getCollision(1).getGeometry().getName().equals("PlayHand"))
                 {
-                    getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();
-                    hud.displayMessage("Clicky clicky.");
-                    hud.updateScore(10);
-                }                
+                    playHand();
+                    return;
+                }
+                
+                //Test code for removing blocks on click
+                if (clickResults.size() > 1)
+                {
+                    if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
+                    {
+                        getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();
+                        hud.displayMessage("Clicky clicky.");
+                        score+=10;  //Temporary score to test HUD
+                    }                
+                }
                 
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
                     String target = clickResults.getCollision(i).getGeometry().getName();
                     System.out.println("Hit #" + i + ": " + target);
                 }
+                
             }
         }
     };

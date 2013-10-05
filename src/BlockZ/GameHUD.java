@@ -40,6 +40,7 @@ public class GameHUD extends AbstractControl {
     //Tick timers for temporary HUD messages
     private float messageCount = 0;
     private float messageTime = 2.0f;
+    private float timeTicker = 0;
     
     
     private long score = 0;
@@ -78,27 +79,27 @@ public class GameHUD extends AbstractControl {
         scoreDisplay.setSize(hudFont.getCharSet().getRenderedSize());      // font size
         scoreDisplay.setColor(color);                             // font color
         scoreDisplay.setText("Score: " + score); 
-        scoreDisplay.setLocalTranslation(75, 300, 0); // position
+        scoreDisplay.setLocalTranslation(50, 300, 0); // position
         game.getGuiNode().attachChild(scoreDisplay);
         
                  
         rateDisplay.setSize(hudFont.getCharSet().getRenderedSize());      // font size
         rateDisplay.setColor(color);                             // font color
         rateDisplay.setText("Rate: " + rate); 
-        rateDisplay.setLocalTranslation(75, 250, 0); // position
+        rateDisplay.setLocalTranslation(50, 250, 0); // position
         game.getGuiNode().attachChild(rateDisplay);
         
                 
         timeDisplay.setSize(hudFont.getCharSet().getRenderedSize());      // font size
         timeDisplay.setColor(color);                             // font color
         timeDisplay.setText("Time: " + time); 
-        timeDisplay.setLocalTranslation(75, 200, 0); // position
+        timeDisplay.setLocalTranslation(50, 200, 0); // position
         game.getGuiNode().attachChild(timeDisplay);
         
         messageDisplay.setSize(hudFont.getCharSet().getRenderedSize());      // font size
         messageDisplay.setColor(color);                             // font color
         messageDisplay.setText(""); 
-        messageDisplay.setLocalTranslation(75, 150, 0); // position
+        messageDisplay.setLocalTranslation(50, 150, 0); // position
         game.getGuiNode().attachChild(messageDisplay);
         
     }
@@ -113,14 +114,14 @@ public class GameHUD extends AbstractControl {
         messageCount = 0;
     }
     
-    public void updateScore(long scoreChange)
+    public void updateScore(long newScore)
     {
-        score += scoreChange;
+        score = newScore;
     }
     
-    public void updateRate(int rateChange)
+    public void updateRate(int newRate)
     {
-        rate += rateChange;
+        rate = newRate;
     }
     
     public void updateTime(int timeChange)
@@ -149,6 +150,12 @@ public class GameHUD extends AbstractControl {
             messageDisplay.setText("");
             
             messageCount -= messageTime;
+        }
+        
+        if((timeTicker += tpf) > 1.0f)
+        {
+            updateTime(1);
+            timeTicker -= 1.0f;
         }
     }
     
