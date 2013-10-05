@@ -23,6 +23,8 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
 import java.util.Random;
+import com.jme3.system.AppSettings;
+
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -39,10 +41,13 @@ public class GameBoard extends SimpleApplication {
     
     float x, y, z;                      //Board dimensions
     
+    int xOffset=5;
     int dropRate=50;
     double time1=System.currentTimeMillis(); 
     
     long score = 0;
+    
+    private GameHUD hud;
     
     int blockIdent=0;
     int explosiveIdent=0;
@@ -55,6 +60,9 @@ public class GameBoard extends SimpleApplication {
     ArrayList<Explosive> detonatedList;
     ArrayList<Long> detonatedTime;    
     
+    //Create GameButtons
+    private GameButton playHandButton;
+    
     //Prepare materials
     private Material blueTrans;
     
@@ -63,7 +71,7 @@ public class GameBoard extends SimpleApplication {
     private static Geometry leftWall;
     private static Geometry rightWall;
     private static Geometry frontWall;
-    private static Geometry backWall;    
+    private static Geometry backWall;
     
     //Prepare physics application state
     private BulletAppState bulletAppState;    
@@ -76,8 +84,11 @@ public class GameBoard extends SimpleApplication {
     private RigidBodyControl    backWall_phy; 
     
     public static void main(String[] args) {
+        AppSettings settings = new AppSettings(true);
+        settings.setResolution(640,480);
         GameBoard app = new GameBoard(10, 14, (float)1.2);
         Logger.getLogger("").setLevel(Level.WARNING);
+        app.setSettings(settings);
         app.start();
     }
     
@@ -98,15 +109,15 @@ public class GameBoard extends SimpleApplication {
         
         //Create geometries and move/rotate to form game board        
         floor = makeFace("Floor", x, z);        
-        floor.move(0f, -y/2, 0f);        
+        floor.move(0f+xOffset, -y/2, 0f);        
         leftWall = makeFace("Left Wall", y, z);
-        leftWall.move(-x, y/2, 0).rotate(0, 0, FastMath.PI/2);
+        leftWall.move(-x+xOffset, y/2, 0).rotate(0, 0, FastMath.PI/2);
         rightWall = makeFace("Right Wall", y, z);
-        rightWall.move(x, y/2, 0).rotate(0, 0, FastMath.PI/2);    
+        rightWall.move(x+xOffset, y/2, 0).rotate(0, 0, FastMath.PI/2);    
         frontWall = makeFace("Front Wall", x, y);
-        frontWall.move(0, y/2, z).rotate(FastMath.PI/2, 0, 0);    
+        frontWall.move(0+xOffset, y/2, z).rotate(FastMath.PI/2, 0, 0);    
         backWall = makeFace("Back Wall", x, y);
-        backWall.move(0, y/2, -z).rotate(FastMath.PI/2, 0, 0);       
+        backWall.move(0+xOffset, y/2, -z).rotate(FastMath.PI/2, 0, 0);       
         
         //Attach geometries to scene graph
         rootNode.attachChild(floor);
@@ -132,6 +143,9 @@ public class GameBoard extends SimpleApplication {
         bulletAppState.getPhysicsSpace().add(leftWall_phy);
         bulletAppState.getPhysicsSpace().add(rightWall_phy);
         
+        hud = new GameHUD(this, score, 0, dropRate);
+        
+        playHandButton = new GameButton(this, bulletAppState, "PlayHand", 5, -11, 3, 1, true);
     }
     
     public Geometry makeFace(String name, float x, float y) {
@@ -166,6 +180,8 @@ public class GameBoard extends SimpleApplication {
         
         createLasers();
         
+        
+        
         setupDebugText();
         
         initKeys();
@@ -178,7 +194,7 @@ public class GameBoard extends SimpleApplication {
         //Equally space five lasers across the bottom of the game board.
         for(int i = 0; i < 5; i++)
         {
-            Laser l = new Laser(this, new Vector3f(-x + (x*0.2f) + ((float)i*x*0.4f), -y/2f - 2f, 0f));
+            Laser l = new Laser(this, new Vector3f(-x + (x*0.2f) + ((float)i*x*0.4f)+xOffset, -y/2f - 2f, 0f));
             switch(i)
             {
                 case 0:
@@ -205,6 +221,7 @@ public class GameBoard extends SimpleApplication {
         
         if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
         {
+<<<<<<< HEAD
             float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                //Randomly generate position at top of board
             
             //1 in 4 chance of making explosive, to be tweaked
@@ -219,6 +236,12 @@ public class GameBoard extends SimpleApplication {
                 blockIdent++;                                                                   //Increment block identifier
             }
             
+=======
+            float[] pos = {(float)rand.nextInt((int)x)-5+xOffset, y, 0};                            //Randomly generate position at top of board
+            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor
+            blockList.add(block1);                                                          //Add block to array list
+            blockIdent++;                                                                   //Increment block identifier
+>>>>>>> origin/gameStructure
             time1=System.currentTimeMillis();                                               //Reset time counter
         }
     }
@@ -273,12 +296,17 @@ public class GameBoard extends SimpleApplication {
             l.update(tpf);
         }
         
-        playHandCounter += tpf;
+        // Update HUD stats and display
+        hud.updateScore(score);
+        hud.updateRate(dropRate);
+        hud.update(tpf);
+        
+       /* playHandCounter += tpf;
         if (playHandCounter > .5f) {
             playHand();
             playHandCounter -= .5f;
         }
-        
+        */
         addBlock();
         removeProjectiles();
     }
@@ -326,7 +354,7 @@ public class GameBoard extends SimpleApplication {
             
             System.out.println("Score = " + String.valueOf(score));
             System.out.println("Rate Of Descent = " + String.valueOf(dropRate));
-            System.out.println(hand.hand.toString());
+            hud.displayMessage(hand.hand.toString());
 
             for (Block b : hand.handBlocks) {
                 b.removeBlock();
@@ -360,7 +388,14 @@ public class GameBoard extends SimpleApplication {
             
                 if(clickResults.size()==0) return;
                 
+                if (clickResults.getCollision(1).getGeometry().getName().equals("PlayHand"))
+                {
+                    playHand();
+                    return;
+                }
+                
                 //Test code for removing blocks on click
+<<<<<<< HEAD
                 if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
                     getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();              
                 
@@ -373,12 +408,24 @@ public class GameBoard extends SimpleApplication {
                     
                 }
                     
+=======
+                if (clickResults.size() > 1)
+                {
+                    if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
+                    {
+                        getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();
+                        hud.displayMessage("Clicky clicky.");
+                        score+=10;  //Temporary score to test HUD
+                    }                
+                }
+>>>>>>> origin/gameStructure
                 
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
                     String target = clickResults.getCollision(i).getGeometry().getName();
                     System.out.println("Hit #" + i + ": " + target);
                 }
+                
             }
         }
     };
