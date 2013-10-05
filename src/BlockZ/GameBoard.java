@@ -45,10 +45,15 @@ public class GameBoard extends SimpleApplication {
     long score = 0;
     
     int blockIdent=0;
+    int explosiveIdent=0;
+    int detonatedIdent=0;
     
     Random rand;
     
     ArrayList<Block> blockList;
+    ArrayList<Explosive> explosiveList;
+    ArrayList<Explosive> detonatedList;
+    ArrayList<Long> detonatedTime;    
     
     //Prepare materials
     private Material blueTrans;
@@ -148,9 +153,14 @@ public class GameBoard extends SimpleApplication {
         //Initialize physics
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState); 
+        bulletAppState.getPhysicsSpace().setAccuracy(1f/90f);       //Increase physics accuracy, to be tweaked later
         
         blockList = new ArrayList();
-        rand = new Random();            //Initialize random number generator
+        explosiveList = new ArrayList();
+        detonatedList = new ArrayList();
+        detonatedTime = new ArrayList();
+        
+        rand = new Random(System.currentTimeMillis());            //Initialize and seed random number generator
         
         createBoard();
         
@@ -193,12 +203,22 @@ public class GameBoard extends SimpleApplication {
     
     public void addBlock() {
         
-        if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))       //If enough time has elapsed for the drop rate (needs heavy tweaking)
+        if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
         {
-            float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                            //Randomly generate position at top of board
-            Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor
-            blockList.add(block1);                                                          //Add block to array list
-            blockIdent++;                                                                   //Increment block identifier
+            float[] pos = {(float)rand.nextInt((int)x)-5, y, 0};                //Randomly generate position at top of board
+            
+            //1 in 4 chance of making explosive, to be tweaked
+            if (rand.nextInt(4)+1 == 1) {
+                Explosive explosive1 = new Explosive(this, bulletAppState, 1, explosiveIdent, 1, pos, ColorRGBA.Yellow); 
+                explosiveList.add(explosive1);
+                explosiveIdent++;
+            }
+            else {                
+                Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor   
+                blockList.add(block1);                                                          //Add block to array list
+                blockIdent++;                                                                   //Increment block identifier
+            }
+            
             time1=System.currentTimeMillis();                                               //Reset time counter
         }
     }
@@ -207,9 +227,23 @@ public class GameBoard extends SimpleApplication {
     public Block getBlock(String name) {
         
         int blockNum = Integer.parseInt(name.substring(6));        
-        //System.out.println(blockNum);
         
         return blockList.get(blockNum);
+    }
+    
+    public Explosive getExplosive(String name) {
+        
+        int explosiveNum = Integer.parseInt(name.substring(10));
+        
+        return explosiveList.get(explosiveNum);
+    }
+    
+    public void removeProjectiles() {
+        
+        //Iterate through list of detonation times
+        for (int i=0; i<detonatedTime.size(); i++)
+            if (System.currentTimeMillis() - detonatedTime.get(i) > 2000)   //If more than 2 seconds has elapsed, remove corresponding projectiles
+                detonatedList.get(i).removeProjectiles();
     }
     
     private void setupDebugText()
@@ -246,6 +280,7 @@ public class GameBoard extends SimpleApplication {
         }
         
         addBlock();
+        removeProjectiles();
     }
     
     public void updateDropRate(int change)
@@ -327,7 +362,17 @@ public class GameBoard extends SimpleApplication {
                 
                 //Test code for removing blocks on click
                 if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
-                    getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();                
+                    getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();              
+                
+                //Test code for detonating explosives on click
+                if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Explo")) {
+                    getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();      
+                    detonatedList.add(getExplosive(clickResults.getCollision(2).getGeometry().getName()));  //Add to detonated list
+                    detonatedTime.add(System.currentTimeMillis());  //Add current time to detonation time list
+                    detonatedIdent++;
+                    
+                }
+                    
                 
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
