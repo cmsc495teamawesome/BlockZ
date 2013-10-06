@@ -36,6 +36,9 @@ public class GameBoard extends SimpleApplication {
     
     ArrayList<Laser> lasers;
     
+    protected float GAME_OVER_TIME_THRESHHOLD = 1.0f;
+    protected float GAME_OVER_MOVE_THRESHHOLD = 0.5f;
+    
     private Object playHandLock = new Object();
     private float playHandCounter = 0f;
     
@@ -291,17 +294,17 @@ public class GameBoard extends SimpleApplication {
             l.update(tpf);
         }
         
+        for(Block b : blockList)
+        {
+            if (b.checkForGameOver(tpf))
+                hud.displayMessage("GAME OVER MUDDA FUGGA");
+        }
         // Update HUD stats and display
         hud.updateScore(score);
         hud.updateRate(dropRate);
         hud.update(tpf);
         
-       /* playHandCounter += tpf;
-        if (playHandCounter > .5f) {
-            playHand();
-            playHandCounter -= .5f;
-        }
-        */
+       
         addBlock();
         removeProjectiles();
     }

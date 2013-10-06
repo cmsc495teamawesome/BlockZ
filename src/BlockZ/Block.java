@@ -21,6 +21,7 @@ public class Block  {
     String name;
     float mass;
     float[] position;
+    float gameOverTimer;
     ColorRGBA color;
     
     private Geometry block;    
@@ -74,6 +75,24 @@ public class Block  {
     public void removeBlock() {
         blockNode.detachChild(block);
         bulletAppState.getPhysicsSpace().remove(block_phy);
+    }
+    
+    public boolean checkForGameOver(float tpf){
+        if (    (block_phy.getPhysicsLocation().y >= game.y) & 
+                ((block_phy.getLinearVelocity().y <= game.GAME_OVER_MOVE_THRESHHOLD) ||
+                 (block_phy.getLinearVelocity().y >= -game.GAME_OVER_MOVE_THRESHHOLD))){
+            gameOverTimer += tpf;
+        }
+        else {
+            gameOverTimer = 0;
+        }
+        
+        if (gameOverTimer >= game.GAME_OVER_TIME_THRESHHOLD){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
     
 }
