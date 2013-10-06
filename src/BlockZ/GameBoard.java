@@ -222,7 +222,7 @@ public class GameBoard extends SimpleApplication {
     
     public void addBlock() {
         
-        if (System.currentTimeMillis()-time1 > 1000*(50/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
+        if (System.currentTimeMillis()-time1 > 1000*(50.0/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
         {
 
             float[] pos = {(float)rand.nextInt((int)x)-5+xOffset, y, 0};                //Randomly generate position at top of board
@@ -312,11 +312,11 @@ public class GameBoard extends SimpleApplication {
     public void updateDropRate(int change)
     {
         // TODO: Implement when drop rate is tweaked - stubbed out for now.
-        /* 
+         
         dropRate += change;
         if(dropRate < 0) dropRate = 0;
         if(dropRate > 100) dropRate = 100;
-        */ 
+         
     }
     
     private void playHand()
@@ -330,21 +330,34 @@ public class GameBoard extends SimpleApplication {
             // TODO: Update HUD
 
             // TODO: Handle the various hands returned by the hand evaluator for specific behavior
+            int blocksToRemove;
             switch (hand.hand) {
+                // When BlockZ, remove half of the current blocks on the board
                 case BlockZ:
+                    removeBlocks(blockList.size()/2);
                     break;
+                    
                 case FourOfAKind:
                     break;
+                    
+                // When Full House, remove houseValue 
                 case FullHouse:
+                    removeBlocks(hand.houseValue);
                     break;
+                    
                 case ThreeOfAKind:
+                    removeBlocks(3);
                     break;
+                    
                 case LargeStraight:
                     break;
+                    
                 case SmallStraight:
                     break;
+                    
                 case Chance:
                     break;
+                    
                 case NotAHand:
                     return;
             }
@@ -361,6 +374,17 @@ public class GameBoard extends SimpleApplication {
         }
     }
 
+    //Removes multiple, randomly chosen blocks.
+    private void removeBlocks(int blocksToRemove){
+        if (blockList.size() < blocksToRemove)
+            blocksToRemove = blockList.size();
+        
+        for (int i = 0; i < blocksToRemove; i++){
+            blockList.get(rand.nextInt(blockList.size())).removeBlock();
+        }
+    }
+    
+    
     @Override
     public void simpleRender(RenderManager rm) {
         //TODO: add render code
