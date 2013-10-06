@@ -231,7 +231,7 @@ public class GameBoard extends SimpleApplication {
                 explosiveIdent++;
             }
             else {                
-                Block block1 = new Block(this, bulletAppState, 1, blockIdent, 1, pos, ColorRGBA.Red);    //Call Block constructor   
+                Block block1 = new Block(this, bulletAppState, 1, blockIdent, rand.nextInt(6)+1, 1, pos, ColorRGBA.Red);    //Call Block constructor   
                 blockList.add(block1);                                                          //Add block to array list
                 blockIdent++;                                                                   //Increment block identifier
             }
