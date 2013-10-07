@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package BlockZ;
 
 import com.jme3.collision.CollisionResult;
@@ -145,7 +141,7 @@ public class Laser extends AbstractControl {
             currentTarget = results.getClosestCollision();
             hasTarget = true;
             boundedLength = currentTarget.getDistance();
-            currentMat.setColor("GlowColor", ColorRGBA.White);
+            currentMat.setColor("GlowColor", color);
         }
         else {
             currentTarget = null;

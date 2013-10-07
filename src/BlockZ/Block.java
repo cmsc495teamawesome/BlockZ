@@ -10,7 +10,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
 
 /**
-    @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
+ * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
  */
 public class Block  {

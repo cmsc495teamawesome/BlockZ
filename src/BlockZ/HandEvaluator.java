@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package BlockZ;
 
 import java.util.ArrayList;
@@ -9,8 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- *
- * @author tuc
+ * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
+ * CMSC495-6380 Professor Hung Dao
  */
 public class HandEvaluator {
         
@@ -109,34 +105,27 @@ public class HandEvaluator {
             return threeOfAKind();
         }
         
-        if(values.containsKey(1)&&values.containsKey(2)&&values.containsKey(3)
-                &&values.containsKey(4)&&values.containsKey(5))
+        if (values.containsKey(3) && values.containsKey(4)) 
         {
-            return largeStraight();
-        }
-        
-        if(values.containsKey(2)&&values.containsKey(3)&&values.containsKey(4)
-                &&values.containsKey(5)&&values.containsKey(6))
-        {
-            return largeStraight();
-        }
-        
-        if(values.containsKey(1)&&values.containsKey(2)
-                &&values.containsKey(3)&&values.containsKey(4))
-        {
-            return smallStraight();
-        }
-        
-        if(values.containsKey(2)&&values.containsKey(3)
-                &&values.containsKey(4)&&values.containsKey(5))
-        {
-            return smallStraight();
-        }
-        
-        if(values.containsKey(3)&&values.containsKey(4)
-                &&values.containsKey(5)&&values.containsKey(6))
-        {
-            return smallStraight();
+            if (values.containsKey(1) && values.containsKey(2) && values.containsKey(5)) {
+                return largeStraight();
+            }
+
+            if (values.containsKey(2) && values.containsKey(5) && values.containsKey(6)) {
+                return largeStraight();
+            }
+
+            if (values.containsKey(1) && values.containsKey(2)) {
+                return smallStraight();
+            }
+
+            if (values.containsKey(2) && values.containsKey(5)) {
+                return smallStraight();
+            }
+
+            if (values.containsKey(5) && values.containsKey(6)) {
+                return smallStraight();
+            }
         }
         
         return chance();

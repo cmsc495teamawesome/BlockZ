@@ -22,6 +22,8 @@ import com.jme3.font.BitmapText;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
+import com.jme3.post.FilterPostProcessor;
+import com.jme3.post.filters.BloomFilter;
 import java.util.Random;
 import com.jme3.system.AppSettings;
 
@@ -31,8 +33,6 @@ import com.jme3.system.AppSettings;
  * CMSC495-6380 Professor Hung Dao
  */
 public class GameBoard extends SimpleApplication { 
-    
-    private BitmapText hudText;
     
     ArrayList<Laser> lasers;
     
@@ -165,7 +165,14 @@ public class GameBoard extends SimpleApplication {
         
         //Set camera starting location, increase movement speed
         cam.setLocation(new Vector3f(0f, 0f, 30f));        
-        flyCam.setMoveSpeed(30);        
+        flyCam.setMoveSpeed(30);   
+        
+        /*  This is burning my eyes
+        FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
+        BloomFilter bloom=new BloomFilter();
+        fpp.addFilter(bloom);
+        viewPort.addProcessor(fpp);
+        */
         
         //Initialize physics
         bulletAppState = new BulletAppState();
@@ -182,10 +189,6 @@ public class GameBoard extends SimpleApplication {
         createBoard();
         
         createLasers();
-        
-        
-        
-        setupDebugText();
         
         initKeys();
     }
@@ -267,26 +270,6 @@ public class GameBoard extends SimpleApplication {
                 detonatedList.get(i).removeProjectiles();
     }
     
-    private void setupDebugText()
-    {
-        hudText = new BitmapText(guiFont, false);
-        hudText.setSize(guiFont.getCharSet().getRenderedSize());      
-        hudText.setColor(ColorRGBA.Blue);                             
-        String debugText = new String("");
-        
-        /*
-        for(Laser l:lasers)
-        {
-            String currentTarget = l.getTarget();
-            debugText = debugText.concat((!currentTarget.equals(""))?currentTarget + "\t\t":"\t\t");
-        }
-        */
-        
-        hudText.setText(debugText);             // the text
-        hudText.setLocalTranslation(275, hudText.getLineHeight(), 0); 
-        guiNode.attachChild(hudText);
-    }
-    
     @Override
     public void simpleUpdate(float tpf) {
         for(Laser l : lasers)
@@ -311,12 +294,9 @@ public class GameBoard extends SimpleApplication {
     
     public void updateDropRate(int change)
     {
-        // TODO: Implement when drop rate is tweaked - stubbed out for now.
-         
         dropRate += change;
         if(dropRate < 0) dropRate = 0;
         if(dropRate > 100) dropRate = 100;
-         
     }
     
     private void playHand()
@@ -326,8 +306,6 @@ public class GameBoard extends SimpleApplication {
 
             score += hand.scoreChange;
             updateDropRate(hand.descentChange);
-
-            // TODO: Update HUD
 
             // TODO: Handle the various hands returned by the hand evaluator for specific behavior
             int blocksToRemove;
@@ -362,9 +340,6 @@ public class GameBoard extends SimpleApplication {
                     return;
             }
 
-            
-            System.out.println("Score = " + String.valueOf(score));
-            System.out.println("Rate Of Descent = " + String.valueOf(dropRate));
             hud.displayMessage(hand.hand.toString());
 
             for (Block b : hand.handBlocks) {
