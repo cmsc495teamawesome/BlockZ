@@ -19,6 +19,7 @@ import com.jme3.input.controls.ActionListener;
 import com.jme3.input.MouseInput;
 import com.jme3.collision.CollisionResults;
 import com.jme3.font.BitmapText;
+import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
@@ -26,6 +27,7 @@ import com.jme3.post.FilterPostProcessor;
 import com.jme3.post.filters.BloomFilter;
 import java.util.Random;
 import com.jme3.system.AppSettings;
+
 
 
 /**
@@ -183,6 +185,12 @@ public class GameBoard extends SimpleApplication {
         explosiveList = new ArrayList();
         detonatedList = new ArrayList();
         detonatedTime = new ArrayList();
+        
+        //Add lighting to the scene, direction to be tweaked
+        DirectionalLight sun = new DirectionalLight();
+        sun.setColor(ColorRGBA.White);
+        sun.setDirection(new Vector3f(0.6f, -1f,-1f).normalizeLocal());
+        rootNode.addLight(sun);
         
         rand = new Random(System.currentTimeMillis());            //Initialize and seed random number generator
         
