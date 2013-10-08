@@ -118,9 +118,9 @@ public class Laser extends AbstractControl {
     protected void controlUpdate(float tpf) {
         if((tickCount += tpf) > tickLimit)
         {
-            resizeBeam();
+        resizeBeam();
             tickCount -= tickLimit;
-        }
+    }
     }
     
     private void resizeBeam()
@@ -138,12 +138,27 @@ public class Laser extends AbstractControl {
         currentMat.setColor("Color", color);
         
         if (results.size() > 0) {
-            currentTarget = results.getClosestCollision();
+            CollisionResult newTarget = results.getClosestCollision();
+            
+            if(currentTarget!=null)
+            {
+                if (!newTarget.getGeometry().getName().equals(currentTarget.getGeometry().getName())) {
+                    game.getBlock(currentTarget.getGeometry().getName()).disableLight();
+                }
+            }
+            
+            currentTarget = newTarget;
+            game.getBlock(currentTarget.getGeometry().getName()).enableLight(color);
+            
             hasTarget = true;
             boundedLength = currentTarget.getDistance();
             currentMat.setColor("GlowColor", color);
         }
         else {
+            if(currentTarget != null)
+            {
+                game.getBlock(currentTarget.getGeometry().getName()).disableLight();
+            }
             currentTarget = null;
             boundedLength = boundedMaximum;
             hasTarget = false;

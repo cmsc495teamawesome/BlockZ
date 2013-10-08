@@ -120,6 +120,7 @@ public class Block  {
     }
     
     public void disableLight() {
+        mat.setColor("Diffuse", ColorRGBA.White);
         blockNode.removeLight(blockLight);
     }
     
