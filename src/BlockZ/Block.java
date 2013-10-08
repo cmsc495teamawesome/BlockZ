@@ -34,6 +34,7 @@ public class Block  {
     private BulletAppState bulletAppState;        
     private RigidBodyControl block_phy;
     
+    Material mat;
     PointLight blockLight;
     
     public Block(GameBoard g, BulletAppState b, int s, int n, int nu, float m, float[] pos, ColorRGBA col) {
@@ -49,7 +50,7 @@ public class Block  {
         bulletAppState=b;        
         
         block = new Geometry(name, new Box(size, size, size));      
-        Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");    
+        mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");    
         
         switch(num) {
             case 1: mat.setTexture("DiffuseMap", game.getAssetManager().loadTexture("Textures/dice_1.png"));
@@ -113,6 +114,7 @@ public class Block  {
     }
     
     public void enableLight(ColorRGBA color) {        
+        mat.setColor("Diffuse", color);
         blockLight.setColor(color);
         blockNode.addLight(blockLight);
     }
