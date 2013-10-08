@@ -57,6 +57,7 @@ public class GameBoard extends SimpleApplication {
     int blockIdent=0;
     int explosiveIdent=0;
     int detonatedIdent=0;
+    int blockParticleIdent=0;
     
     Random rand;
     
@@ -64,6 +65,8 @@ public class GameBoard extends SimpleApplication {
     ArrayList<Explosive> explosiveList;
     ArrayList<Explosive> detonatedList;
     ArrayList<Long> detonatedTime;    
+    ArrayList<Block> blockParticleList;
+    ArrayList<Long> blockParticleTime;
     
     //Create GameButtons
     private GameButton playHandButton;
@@ -185,6 +188,8 @@ public class GameBoard extends SimpleApplication {
         explosiveList = new ArrayList();
         detonatedList = new ArrayList();
         detonatedTime = new ArrayList();
+        blockParticleList = new ArrayList();
+        blockParticleTime = new ArrayList();
         
         //Add lighting to the scene, direction to be tweaked
         DirectionalLight sun = new DirectionalLight();
@@ -245,7 +250,7 @@ public class GameBoard extends SimpleApplication {
                 explosiveIdent++;
             }
             else {                
-                Block block1 = new Block(this, bulletAppState, 1, blockIdent, rand.nextInt(6)+1, 1, pos, ColorRGBA.Red);    //Call Block constructor   
+                Block block1 = new Block(this, bulletAppState, 1, blockIdent, rand.nextInt(6)+1, 1, pos, ColorRGBA.Gray);    //Call Block constructor   
                 blockList.add(block1);                                                          //Add block to array list
                 blockIdent++;                                                                   //Increment block identifier
             }
@@ -274,8 +279,19 @@ public class GameBoard extends SimpleApplication {
         
         //Iterate through list of detonation times
         for (int i=0; i<detonatedTime.size(); i++)
-            if (System.currentTimeMillis() - detonatedTime.get(i) > 2000)   //If more than 2 seconds has elapsed, remove corresponding projectiles
+            if (System.currentTimeMillis() - detonatedTime.get(i) > 1000) {  //If more than 2 seconds has elapsed, remove corresponding projectiles
                 detonatedList.get(i).removeProjectiles();
+                detonatedList.get(i).removeParticles();
+            }
+    }
+    
+    public void removeParticles() {
+        for (int i=0; i<blockParticleTime.size(); i++)
+            if (System.currentTimeMillis() - blockParticleTime.get(i) > 1000) {  //If more than 2 seconds has elapsed, remove corresponding projectiles
+                blockParticleList.get(i).removeProjectiles();
+                blockParticleList.get(i).removeParticles();
+                
+            }
     }
     
     @Override
@@ -298,6 +314,7 @@ public class GameBoard extends SimpleApplication {
        
         addBlock();
         removeProjectiles();
+        removeParticles();
     }
     
     public void updateDropRate(int change)
@@ -406,6 +423,9 @@ public class GameBoard extends SimpleApplication {
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
                     {
                         getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();
+                        blockParticleList.add(getBlock(clickResults.getCollision(2).getGeometry().getName()));
+                        blockParticleTime.add(System.currentTimeMillis());
+                        blockParticleIdent++;
                         hud.displayMessage("Clicky clicky.");
                         score+=10;  //Temporary score to test HUD
                     }

@@ -3,16 +3,17 @@ package BlockZ;
 
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.light.PointLight;
 import com.jme3.material.Material;
-import com.jme3.material.RenderState;
-import com.jme3.material.RenderState.BlendMode;
 import com.jme3.math.ColorRGBA;
-import com.jme3.renderer.queue.RenderQueue.Bucket;
+import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.control.LightControl;
 import com.jme3.scene.shape.Box;
+import java.util.ArrayList;
 
 /**
  * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -21,6 +22,7 @@ import com.jme3.scene.shape.Box;
 public class Block  {
     
     public static Node blockNode = new Node("BlockZ");
+    private Node projectileNode = new Node();
     
     int size, num; 
     String name;
@@ -34,8 +36,15 @@ public class Block  {
     private BulletAppState bulletAppState;        
     private RigidBodyControl block_phy;
     
+    Vector3f currentPosition;
+    
     Material mat;
     PointLight blockLight;
+    
+    ParticleEmitter debris;
+    ParticleEmitter debris1;
+    
+    private ArrayList<RigidBodyControl> projectilePhyList;
     
     public Block(GameBoard g, BulletAppState b, int s, int n, int nu, float m, float[] pos, ColorRGBA col) {
         
@@ -48,6 +57,8 @@ public class Block  {
         color=col;
         game=g;
         bulletAppState=b;        
+        
+        projectilePhyList = new ArrayList();
         
         block = new Geometry(name, new Box(size, size, size));      
         mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");    
@@ -75,6 +86,7 @@ public class Block  {
         
         block.setUserData("Value", num);
         blockNode.attachChild(block);
+        blockNode.attachChild(projectileNode);
         game.getRootNode().attachChild(blockNode);
         block.setLocalTranslation(pos[0], pos[1], pos[2]);        
         block_phy = new RigidBodyControl(1f);
@@ -91,8 +103,81 @@ public class Block  {
     }  
     
     public void removeBlock() {
+        currentPosition = block.getLocalTranslation();
+        
+        makeProjectile(currentPosition.add(0.3f, 0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(0.0f, 0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(-0.3f, 0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(0.3f, 0.0f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(-0.3f, 0.0f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(0.3f, -0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(0.0f, -0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
+        makeProjectile(currentPosition.add(-0.3f, -0.3f, 0f), new Vector3f(block_phy.getLinearVelocity())); 
+        
+        emitParticles();
         blockNode.detachChild(block);
         bulletAppState.getPhysicsSpace().remove(block_phy);
+    }
+    
+    private void makeProjectile(Vector3f position, Vector3f velocity) {
+        
+        Geometry projectile = new Geometry("Projectile", new Box(0.2f, 0.2f, 0.2f));
+        projectile.setLocalTranslation(position);
+        Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        mat.setBoolean("UseMaterialColors", true);
+        mat.setColor("Diffuse", color);
+        projectile.setMaterial(mat);        
+        projectileNode.attachChild(projectile);
+        
+        RigidBodyControl projectile_phy = new RigidBodyControl(1f);
+        projectile_phy.setMass(0.2f);
+        projectile.addControl(projectile_phy);
+        bulletAppState.getPhysicsSpace().add(projectile_phy);
+        projectilePhyList.add(projectile_phy);
+        
+        projectile_phy.setLinearVelocity(velocity);
+        
+    }
+    
+    public void emitParticles() {
+        debris = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 10);
+        Material matDebris = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        matDebris.setTexture("Texture", game.getAssetManager().loadTexture("Effects/Explosion/Debris.png"));
+        debris.setMaterial(matDebris);
+        debris.setStartColor(color);
+        debris.getParticleInfluencer().setInitialVelocity(block_phy.getLinearVelocity());
+        debris.setLowLife(1.4f);
+        debris.setHighLife(1.5f);
+        debris.setParticlesPerSec(40);
+        debris.getParticleInfluencer().setVelocityVariation(0.15f);
+        blockNode.attachChild(debris);
+        debris.setLocalTranslation(block.getLocalTranslation());
+        
+        //Position of second particle emitter as a function of block's velocity
+        debris1 = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 10);        
+        debris1.setMaterial(matDebris);
+        debris1.setStartColor(color);
+        debris1.getParticleInfluencer().setInitialVelocity(block_phy.getLinearVelocity());
+        debris1.setLowLife(0.99f);
+        debris1.setHighLife(1f);
+        debris1.setParticlesPerSec(40);
+        debris1.getParticleInfluencer().setVelocityVariation(0.1f);
+        blockNode.attachChild(debris1);
+        debris1.setLocalTranslation(block.getLocalTranslation().add(block_phy.getLinearVelocity().mult(0.15f)));
+        
+        
+    }
+    
+    public void removeParticles() {        
+        blockNode.detachChild(debris);
+        blockNode.detachChild(debris1);
+    }
+    
+    public void removeProjectiles() {
+         projectileNode.detachAllChildren();
+        
+        for (int i=0; i<projectilePhyList.size(); i++)
+            bulletAppState.getPhysicsSpace().remove(projectilePhyList.get(i));
     }
     
     public boolean checkForGameOver(float tpf){
@@ -113,13 +198,16 @@ public class Block  {
         }
     }
     
-    public void enableLight(ColorRGBA color) {        
+    public void enableLight(ColorRGBA col) {        
+        color = col;
         mat.setColor("Diffuse", color);
         blockLight.setColor(color);
         blockNode.addLight(blockLight);
     }
     
     public void disableLight() {
+        color = ColorRGBA.Gray;
+        mat.setColor("Diffuse", ColorRGBA.White);
         blockNode.removeLight(blockLight);
     }
     
