@@ -11,7 +11,6 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.control.LightControl;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
@@ -126,6 +125,7 @@ public class Block  {
         projectile = new Geometry("Projectile", new Box(0.2f, 0.2f, 0.2f));
         projectile.setLocalTranslation(position);
         Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");
+        mat.setTexture("DiffuseMap", game.getAssetManager().loadTexture("Textures/dice_blank.png"));
         mat.setBoolean("UseMaterialColors", true);
         mat.setColor("Diffuse", color);
         projectile.setMaterial(mat);        
@@ -156,6 +156,7 @@ public class Block  {
         blockNode.attachChild(debris);
         debris.setLocalTranslation(block.getLocalTranslation());
         
+        
         //Position of second particle emitter as a function of block's velocity
         debris1 = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 7);        
         debris1.setMaterial(matDebris);
@@ -172,6 +173,8 @@ public class Block  {
     }
     
     public void removeParticles() {        
+        debris.killAllParticles();
+        debris1.killAllParticles();
         blockNode.detachChild(debris);
         blockNode.detachChild(debris1);
     }

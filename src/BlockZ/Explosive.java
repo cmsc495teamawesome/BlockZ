@@ -35,7 +35,7 @@ public class Explosive {
     private BulletAppState bulletAppState;        
     private RigidBodyControl explosive_phy;
     
-    ParticleEmitter fire;    
+    ParticleEmitter shockwave;    
     
     private ArrayList<RigidBodyControl> projectilePhyList;
     
@@ -108,24 +108,25 @@ public class Explosive {
     }
     
     public void emitParticles() {
-        fire = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 1);
+        shockwave = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 1);
         Material matDebris = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
         matDebris.setTexture("Texture", game.getAssetManager().loadTexture("Effects/Explosion/shockwave.png"));
-        fire.setMaterial(matDebris);
-        fire.setStartColor(ColorRGBA.Orange);
-        fire.setLowLife(0.9f);
-        fire.setHighLife(1f);
-        fire.setEndSize(6f);
-        fire.setParticlesPerSec(40);
-        fire.getParticleInfluencer().setVelocityVariation(0f);
-        explosiveNode.attachChild(fire);
-        fire.setLocalTranslation(explosive.getLocalTranslation());
+        shockwave.setMaterial(matDebris);
+        shockwave.setStartColor(ColorRGBA.Orange);
+        shockwave.setLowLife(1.0f);
+        shockwave.setHighLife(1.1f);
+        shockwave.setEndSize(6f);
+        shockwave.setParticlesPerSec(40);
+        shockwave.getParticleInfluencer().setVelocityVariation(0f);
+        explosiveNode.attachChild(shockwave);
+        shockwave.setLocalTranslation(explosive.getLocalTranslation());
         
         
     }
     
     public void removeParticles() {        
-        explosiveNode.detachChild(fire);        
+        shockwave.killAllParticles();
+        explosiveNode.detachChild(shockwave);        
     }
     
     public void removeProjectiles() {
