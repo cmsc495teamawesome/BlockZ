@@ -61,13 +61,13 @@ public class GameButton {
         }
     }
     
-    public void enable()
+    public void disable()
     {
         game.getRootNode().detachChild(buttonFace);
         physicsSpace.getPhysicsSpace().remove(face_phy);
     }
     
-    public void disable()
+    public void enable()
     {
         game.getRootNode().attachChild(buttonFace);
         physicsSpace.getPhysicsSpace().add(face_phy);

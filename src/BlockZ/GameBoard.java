@@ -295,9 +295,23 @@ public class GameBoard extends SimpleApplication {
         hud.updateRate(dropRate);
         hud.update(tpf);
         
-       
+        updatePlayHandButton();
+        
         addBlock();
         removeProjectiles();
+    }
+    
+    public void updatePlayHandButton()
+    {
+        HandEvaluator.HandResult hand = new HandEvaluator(this).getHand();
+        if(!hand.hand.equals(HandEvaluator.hands.NotAHand))
+        {
+            playHandButton.enable();
+        }
+        else
+        {
+            playHandButton.disable();
+        }
     }
     
     public void updateDropRate(int change)
