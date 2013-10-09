@@ -238,8 +238,8 @@ public class GameBoard extends SimpleApplication {
 
             float[] pos = {(float)rand.nextInt((int)x)-5+xOffset, y, 0};                //Randomly generate position at top of board
             
-            //1 in 4 chance of making explosive, to be tweaked
-            if (rand.nextInt(4)+1 == 1) {
+            //1 in 8 chance of making explosive, to be tweaked
+            if (rand.nextInt(8)+1 == 1) {
                 Explosive explosive1 = new Explosive(this, bulletAppState, 1, explosiveIdent, 1, pos, ColorRGBA.Yellow); 
                 explosiveList.add(explosive1);
                 explosiveIdent++;
@@ -338,6 +338,8 @@ public class GameBoard extends SimpleApplication {
                     break;
                     
                 case FourOfAKind:
+                    removeBlockLine("vertical");
+                    removeBlockLine("vertical");
                     break;
                     
                 // When Full House, remove houseValue 
@@ -350,9 +352,12 @@ public class GameBoard extends SimpleApplication {
                     break;
                     
                 case LargeStraight:
+                    removeBlockLine("horizontal");
+                    removeBlockLine("horizontal");
                     break;
                     
                 case SmallStraight:
+                    removeBlockLine("horizontal");
                     break;
                     
                 case Chance:
@@ -371,6 +376,52 @@ public class GameBoard extends SimpleApplication {
         }
     }
 
+    // Casts a straight line across the board and removes intersecting blocks
+    //   parameter = "vertical" or "horizontal"
+    private void removeBlockLine(String orientation){
+        
+        float x1 = 0;
+        float x2 = 0;
+        float y1 = 0;
+        float y2 = 0;
+        
+        // Set coordinates for verical beam
+        if (orientation.equals("vertical")){
+            y1 = -y/2;
+            y2 = 9*y/10;
+            x1 = (rand.nextFloat()*2*x) - x + xOffset;
+            x2 = (rand.nextFloat()*2*x) - x + xOffset;
+        }
+        
+        // Set coordinates for horizontal beam
+        if (orientation.equals("horizontal")){
+            x1 = -x+xOffset;
+            x2 = x+xOffset;
+            y1 = (rand.nextFloat()*3*y/2) - (y/2);
+            y2 = (rand.nextFloat()*3*y/2) - (y/2);
+        }
+        
+        // Create collisionResults array
+        CollisionResults hitObjects = new CollisionResults();
+                
+        // Create direction from point x to point y
+        Vector3f dir = new Vector3f(x2-x1, y2-y1, 0);
+                
+        // Aim the ray from x1 to x2
+        Ray ray = new Ray(new Vector3f(x1, y1, 0), dir);
+        
+          
+        // Collect intersections between ray and all nodes in results list.
+        rootNode.collideWith(ray, hitObjects);
+           
+        for (int j = 0; j < hitObjects.size(); j++){
+          
+            if (hitObjects.getCollision(j).getGeometry().getName().startsWith("Block")){
+                 System.out.println("Removing block in line"); 
+                 getBlock(hitObjects.getCollision(j).getGeometry().getName()).removeBlock();
+             }
+        }
+    }
     //Removes multiple, randomly chosen blocks.
     private void removeBlocks(int blocksToRemove){
         if (blockList.size() < blocksToRemove)
