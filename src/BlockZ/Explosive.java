@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Explosive {
     
-    public static Node explosiveNode = new Node("BlockZ");
+    public static Node explosiveNode = new Node("ExplosiveZ");
     private Node projectileNode = new Node();
     
     int size; 

@@ -144,11 +144,15 @@ public class Laser extends AbstractControl {
             {
                 if (!newTarget.getGeometry().getName().equals(currentTarget.getGeometry().getName())) {
                     game.getBlock(currentTarget.getGeometry().getName()).disableLight();
+                    game.getBlock(newTarget.getGeometry().getName()).enableLight(color);
                 }
+            }
+            else
+            {
+                game.getBlock(newTarget.getGeometry().getName()).enableLight(color);
             }
             
             currentTarget = newTarget;
-            game.getBlock(currentTarget.getGeometry().getName()).enableLight(color);
             
             hasTarget = true;
             boundedLength = currentTarget.getDistance();
