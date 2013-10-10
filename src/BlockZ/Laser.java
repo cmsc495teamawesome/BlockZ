@@ -105,6 +105,9 @@ public class Laser extends AbstractControl {
         }
         else 
         {
+            //CHANGED
+            if (currentTarget.getGeometry().getName() == "Projectile") {return 0;}
+            else
             return currentTarget.getGeometry().getUserData("Value");
         }
     }
@@ -143,13 +146,21 @@ public class Laser extends AbstractControl {
             if(currentTarget!=null)
             {
                 if (!newTarget.getGeometry().getName().equals(currentTarget.getGeometry().getName())) {
+                    //CHANGED
+                    if (currentTarget.getGeometry().getName() == "Projectile") {}
+                    else
                     game.getBlock(currentTarget.getGeometry().getName()).disableLight();
+                    //CHANGED
+                    if (newTarget.getGeometry().getName() == "Projectile") {}
+                    else
                     game.getBlock(newTarget.getGeometry().getName()).enableLight(color);
                 }
             }
             else
             {
-                game.getBlock(newTarget.getGeometry().getName()).enableLight(color);
+                if (newTarget.getGeometry().getName() == "Projectile") {}
+                else
+                    game.getBlock(newTarget.getGeometry().getName()).enableLight(color);
             }
             
             currentTarget = newTarget;
@@ -161,6 +172,9 @@ public class Laser extends AbstractControl {
         else {
             if(currentTarget != null)
             {
+                //CHANGED
+                if (currentTarget.getGeometry().getName() == "Projectile") {}
+                else
                 game.getBlock(currentTarget.getGeometry().getName()).disableLight();
             }
             currentTarget = null;

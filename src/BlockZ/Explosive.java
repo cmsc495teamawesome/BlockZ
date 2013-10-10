@@ -3,10 +3,11 @@ package BlockZ;
 
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -34,6 +35,7 @@ public class Explosive {
     private BulletAppState bulletAppState;        
     private RigidBodyControl explosive_phy;
     
+    ParticleEmitter shockwave;    
     
     private ArrayList<RigidBodyControl> projectilePhyList;
     
@@ -80,7 +82,9 @@ public class Explosive {
         makeProjectile(currentPosition.add(-0.2f, 0.0f, 0f), new Vector3f(-20.0f, 0f, 0f));
         makeProjectile(currentPosition.add(0.2f, -0.2f, 0f), new Vector3f(20.0f, -20.0f, 0f));
         makeProjectile(currentPosition.add(0.0f, -0.2f, 0f), new Vector3f(0f, -20.0f, 0f));
-        makeProjectile(currentPosition.add(-0.2f, -0.2f, 0f), new Vector3f(-20.0f, -20.0f, 0f));        
+        makeProjectile(currentPosition.add(-0.2f, -0.2f, 0f), new Vector3f(-20.0f, -20.0f, 0f));      
+        
+        emitParticles();
         
     }
     
@@ -101,6 +105,28 @@ public class Explosive {
         
         projectile_phy.setLinearVelocity(velocity);
         
+    }
+    
+    public void emitParticles() {
+        shockwave = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 1);
+        Material matDebris = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
+        matDebris.setTexture("Texture", game.getAssetManager().loadTexture("Effects/Explosion/shockwave.png"));
+        shockwave.setMaterial(matDebris);
+        shockwave.setStartColor(ColorRGBA.Orange);
+        shockwave.setLowLife(1.0f);
+        shockwave.setHighLife(1.1f);
+        shockwave.setEndSize(6f);
+        shockwave.setParticlesPerSec(40);
+        shockwave.getParticleInfluencer().setVelocityVariation(0f);
+        explosiveNode.attachChild(shockwave);
+        shockwave.setLocalTranslation(explosive.getLocalTranslation());
+        
+        
+    }
+    
+    public void removeParticles() {        
+        shockwave.killAllParticles();
+        explosiveNode.detachChild(shockwave);        
     }
     
     public void removeProjectiles() {
