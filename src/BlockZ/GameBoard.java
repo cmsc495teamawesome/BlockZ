@@ -373,6 +373,8 @@ public class GameBoard extends SimpleApplication {
             hud.displayMessage(hand.hand.toString());
 
             for (Block b : hand.handBlocks) {
+                blockParticleList.add(b);
+                blockParticleTime.add(System.currentTimeMillis());
                 b.removeBlock();
             }
 
