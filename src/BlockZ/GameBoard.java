@@ -12,21 +12,16 @@ import com.jme3.renderer.queue.RenderQueue;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.MouseInput;
 import com.jme3.collision.CollisionResults;
-import com.jme3.font.BitmapText;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
+import java.util.HashMap;
 import java.util.Random;
-import com.jme3.system.AppSettings;
 
 
 
@@ -53,6 +48,7 @@ public class GameBoard extends SimpleApplication {
     long score = 0;
     
     private GameHUD hud;
+    private GameMenu gameMenu;
     
     int blockIdent=0;
     int explosiveIdent=0;
@@ -88,14 +84,7 @@ public class GameBoard extends SimpleApplication {
     private RigidBodyControl    frontWall_phy;
     private RigidBodyControl    backWall_phy; 
     
-    public static void main(String[] args) {
-        AppSettings settings = new AppSettings(true);
-        settings.setResolution(640,480);
-        GameBoard app = new GameBoard(10, 14, (float)1.2);
-        Logger.getLogger("").setLevel(Level.WARNING);
-        app.setSettings(settings);
-        app.start();
-    }
+    
     
     public GameBoard(float width, float height, float depth) {
         
@@ -231,6 +220,11 @@ public class GameBoard extends SimpleApplication {
         }
     }
     
+    public void setGameMenu(GameMenu m)
+    {
+        gameMenu = m;
+    }
+    
     public void addBlock() {
         
         if (System.currentTimeMillis()-time1 > 1000*(50.0/dropRate))             //If enough time has elapsed for the drop rate (needs heavy tweaking)
@@ -288,7 +282,12 @@ public class GameBoard extends SimpleApplication {
         for(Block b : blockList)
         {
             if (b.checkForGameOver(tpf))
-                hud.displayMessage("GAME OVER MUDDA FUGGA");
+            {
+                HashMap<String,String> values = new HashMap<String, String>();
+                values.put("Score", String.valueOf(score));
+                gameMenu.handleGameOver(values);
+            }
+            
         }
         // Update HUD stats and display
         hud.updateScore(score);
