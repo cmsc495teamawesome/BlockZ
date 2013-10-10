@@ -139,7 +139,7 @@ public class GameBoard extends SimpleApplication {
         
         hud = new GameHUD(this, score, 0, dropRate);
         
-        playHandButton = new GameButton(this, bulletAppState, "PlayHand", 5, -11, 3, 1, true);
+        playHandButton = new GameButton(this, bulletAppState, "Play Hand", 5, -11, 3, 1, true);
     }
     
     public Geometry makeFace(String name, float x, float y) {
