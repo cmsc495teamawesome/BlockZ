@@ -21,9 +21,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.math.Vector2f;
 import com.jme3.math.Ray;
 import java.util.HashMap;
-import com.jme3.post.FilterPostProcessor;
-import com.jme3.post.filters.BloomFilter;
-import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import java.util.Random;
 import com.jme3.ui.Picture;
@@ -174,13 +171,6 @@ public class GameBoard extends SimpleApplication {
         cam.setLocation(new Vector3f(0f, 0f, ((x > y) ? x : y) * 2.25f));        
         flyCam.setMoveSpeed(30);   
         
-        /*  This is burning my eyes
-        FilterPostProcessor fpp=new FilterPostProcessor(assetManager);
-        BloomFilter bloom=new BloomFilter();
-        fpp.addFilter(bloom);
-        viewPort.addProcessor(fpp);
-        */
-        
         //Initialize physics
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState); 
@@ -329,6 +319,7 @@ public class GameBoard extends SimpleApplication {
             {
                 HashMap<String,String> values = new HashMap<String, String>();
                 values.put("Score", String.valueOf(score));
+                this.stop();
                 gameMenu.handleGameOver(values);
             }
             
