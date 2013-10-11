@@ -485,7 +485,7 @@ public class GameBoard extends SimpleApplication {
             
                 if(clickResults.size()==0) return;
                 
-                if (clickResults.getCollision(1).getGeometry().getName().equals("PlayHand"))
+                if (clickResults.getCollision(1).getGeometry().getName().equals("Play Hand"))
                 {
                     playHand();
                     return;
