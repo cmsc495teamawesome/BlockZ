@@ -53,8 +53,11 @@ public class Explosive {
         projectilePhyList = new ArrayList();
         
         explosive = new Geometry(name, new Box(size, size, size));
-        Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-        mat.setColor("Color", col);
+        Material mat = new Material(game.getAssetManager(), "Common/MatDefs/Light/Lighting.j3md");  
+        mat.setTexture("DiffuseMap", game.getAssetManager().loadTexture("Textures/explosive.png"));
+        mat.setBoolean("UseMaterialColors",true); 
+        mat.setColor("Diffuse",ColorRGBA.White);
+        mat.setColor("Specular",ColorRGBA.White);  
         explosive.setMaterial(mat);
         explosive.setUserData("Value", (n%6)+1);
         explosiveNode.attachChild(explosive);
@@ -65,10 +68,11 @@ public class Explosive {
         explosive_phy.setMass(mass);
         explosive.addControl(explosive_phy);    
         bulletAppState.getPhysicsSpace().add(explosive_phy);
-        
     }  
     
     public void explode() {
+        game.detonatedList.add(this);  //Add to detonated list
+        game.detonatedTime.add(System.currentTimeMillis());  //Add current time to detonation time list
         
         currentPosition = explosive.getLocalTranslation();
         
@@ -98,7 +102,7 @@ public class Explosive {
         projectileNode.attachChild(projectile);
         
         RigidBodyControl projectile_phy = new RigidBodyControl(1f);
-        projectile_phy.setMass(10.0f);
+        projectile_phy.setMass(7.0f);
         projectile.addControl(projectile_phy);
         bulletAppState.getPhysicsSpace().add(projectile_phy);
         projectilePhyList.add(projectile_phy);
@@ -122,15 +126,11 @@ public class Explosive {
         shockwave.setLocalTranslation(explosive.getLocalTranslation());
         
         
-    }
+    }    
     
-    public void removeParticles() {        
-        shockwave.killAllParticles();
-        explosiveNode.detachChild(shockwave);        
-    }
-    
-    public void removeProjectiles() {
+    public void removeEffects() {
         
+        explosiveNode.detachChild(shockwave); 
         projectileNode.detachAllChildren();
         
         for (int i=0; i<projectilePhyList.size(); i++)

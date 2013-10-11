@@ -23,6 +23,7 @@ public class Block  {
     
     public static Node blockNode = new Node("BlockZ");
     private Node projectileNode = new Node();
+    private Node particleNode = new Node();
     
     int size, num; 
     String name;
@@ -91,7 +92,7 @@ public class Block  {
         game.getRootNode().attachChild(blockNode);
         block.setLocalTranslation(pos[0], pos[1], pos[2]);        
         block_phy = new RigidBodyControl(1f);
-        block_phy.setMass(mass);
+        block_phy.setMass(mass);        
         block.addControl(block_phy);    
         bulletAppState.getPhysicsSpace().add(block_phy);        
         
@@ -104,6 +105,9 @@ public class Block  {
     }  
     
     public void removeBlock() {
+        game.blockParticleList.add(this);
+        game.blockParticleTime.add(System.currentTimeMillis());
+        
         currentPosition = block.getLocalTranslation();
         
         makeProjectile(currentPosition.add(0.3f, 0.3f, 0f), new Vector3f(block_phy.getLinearVelocity()));
@@ -143,7 +147,7 @@ public class Block  {
     }
     
     public void emitParticles() {
-        debris = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 7);
+        debris = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 5);
         Material matDebris = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
         matDebris.setTexture("Texture", game.getAssetManager().loadTexture("Effects/Explosion/Debris.png"));        
         debris.setMaterial(matDebris);
@@ -153,12 +157,12 @@ public class Block  {
         debris.setHighLife(1.5f);
         debris.setParticlesPerSec(40);
         debris.getParticleInfluencer().setVelocityVariation(0.15f);
-        blockNode.attachChild(debris);
+        particleNode.attachChild(debris);        
         debris.setLocalTranslation(block.getLocalTranslation());
         
         
         //Position of second particle emitter as a function of block's velocity
-        debris1 = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 7);        
+        debris1 = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 5);        
         debris1.setMaterial(matDebris);
         debris1.setStartColor(color);
         debris1.getParticleInfluencer().setInitialVelocity(block_phy.getLinearVelocity());
@@ -166,39 +170,21 @@ public class Block  {
         debris1.setHighLife(1f);
         debris1.setParticlesPerSec(40);
         debris1.getParticleInfluencer().setVelocityVariation(0.1f);
-        blockNode.attachChild(debris1);
-        debris1.setLocalTranslation(block.getLocalTranslation().add(block_phy.getLinearVelocity().mult(0.15f)));
+        particleNode.attachChild(debris1);
+        debris1.setLocalTranslation(block.getLocalTranslation().add(block_phy.getLinearVelocity().mult(0.1f)));
+        
+        blockNode.attachChild(particleNode);
         
         
     }
     
-    public void removeParticles() {        
-        debris.killAllParticles();
-        debris1.killAllParticles();
-        blockNode.detachChild(debris);
-        blockNode.detachChild(debris1);
-    }
-    
-    public void removeProjectiles() {
+    public void removeEffects() {        
         
-        /*TODO, get particles emitting from debris when they are removed
-        if (projectileNode.hasChild(projectile))
-        for (int i=0; i<8; i++) {
-            ParticleEmitter smallDebris = new ParticleEmitter("Emitter", ParticleMesh.Type.Triangle, 7);
-            Material matDebris = new Material(game.getAssetManager(), "Common/MatDefs/Misc/Particle.j3md");
-            matDebris.setTexture("Texture", game.getAssetManager().loadTexture("Effects/Explosion/Debris.png"));        
-            smallDebris.setMaterial(matDebris);
-            smallDebris.setStartColor(color);
-            smallDebris.setLowLife(1.4f);
-            smallDebris.setHighLife(1.5f);
-            smallDebris.setParticlesPerSec(40);
-            smallDebris.getParticleInfluencer().setVelocityVariation(0.15f);
-            blockNode.attachChild(smallDebris);
-            debris.setLocalTranslation(projectileNode.getChild(i).getLocalTranslation());
-        }*/
-        
-        
+         particleNode.detachAllChildren();
+         blockNode.detachChild(particleNode);
+         
          projectileNode.detachAllChildren();
+         blockNode.detachChild(projectileNode);
          
         for (int i=0; i<projectilePhyList.size(); i++)
             bulletAppState.getPhysicsSpace().remove(projectilePhyList.get(i));
