@@ -205,15 +205,18 @@ public class Block  {
     }
     
     public boolean checkForGameOver(float tpf){
-        if (    (block_phy.getPhysicsLocation().y >= game.y) & 
-                ((block_phy.getLinearVelocity().y <= game.GAME_OVER_MOVE_THRESHHOLD) ||
+        if (    (block_phy.getPhysicsLocation().y >= game.y*9/10) & 
+                ((block_phy.getLinearVelocity().y <= game.GAME_OVER_MOVE_THRESHHOLD) &
                  (block_phy.getLinearVelocity().y >= -game.GAME_OVER_MOVE_THRESHHOLD))){
             gameOverTimer += tpf;
+            // Commented out troubleshooting line to see game over trigger
+            //System.out.println("linear velocity " + this.name + " :" +block_phy.getLinearVelocity().y);
         }
         else {
             gameOverTimer = 0;
         }
         
+           
         if (gameOverTimer >= game.GAME_OVER_TIME_THRESHHOLD){
             return true;
         }

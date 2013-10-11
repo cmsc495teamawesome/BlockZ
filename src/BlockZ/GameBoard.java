@@ -26,6 +26,8 @@ import com.jme3.post.filters.BloomFilter;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.Spatial.CullHint;
 import java.util.Random;
+import com.jme3.ui.Picture;
+import com.jme3.renderer.ViewPort;
 
 
 
@@ -38,7 +40,7 @@ public class GameBoard extends SimpleApplication {
     ArrayList<Laser> lasers;
     
     protected float GAME_OVER_TIME_THRESHHOLD = 1.0f;
-    protected float GAME_OVER_MOVE_THRESHHOLD = 0.5f;
+    protected float GAME_OVER_MOVE_THRESHHOLD = 0.3f;
     
     private Object playHandLock = new Object();
     private float playHandCounter = 0f;
@@ -198,6 +200,20 @@ public class GameBoard extends SimpleApplication {
         createLasers();
         
         initKeys();
+        
+        Picture bg = new Picture("background");
+        bg.setImage(assetManager, "Textures/background_small.png", false);
+        bg.setWidth(640);
+        bg.setHeight(480);
+        bg.setPosition(0, 0);
+        
+        ViewPort pv = renderManager.createPreView("background", cam);
+        pv.setClearFlags(true, true, true);
+        pv.attachScene(bg);
+
+        viewPort.setClearFlags(false, true, true);       
+        bg.updateGeometricState();
+
     }
 
     public void createLasers()
