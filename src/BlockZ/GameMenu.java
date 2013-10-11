@@ -1,31 +1,84 @@
 package BlockZ;
 
 import com.jme3.system.AppSettings;
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
+import javax.swing.JFrame;
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
  */
-public class GameMenu {
+public class GameMenu{
     
-private GameBoard game = null;
-    
-public enum level{
+public enum level {
+
     EASY,
     MEDIUM,
     DIFFICULT
 }
+private GameBoard game = null;
 
-    
 public GameMenu()
 {
-    // TODO: Implement a visual control to present the choice between a few difficulty levels
+    JFrame mainMenu = new JFrame();
+    mainMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    mainMenu.setSize(660, 300);
+    mainMenu.setLocation(300, 300);   
+    mainMenu.setLayout(new BorderLayout());
     
-    loadLevel(level.DIFFICULT);
+    JButton easyButton = new JButton("Easy");
+    easyButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent event)
+            {
+               //When the fruit of veg button is pressed
+               //the setVisible value of the listPanel and
+               //comboPanel is switched from true to 
+               //value or vice versa.
+               loadLevel(level.EASY);
+            }
+        });
+    mainMenu.add(easyButton, BorderLayout.LINE_START);
+    
+    JButton mediumButton = new JButton("Medium");
+    mediumButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent event)
+            {
+               //When the fruit of veg button is pressed
+               //the setVisible value of the listPanel and
+               //comboPanel is switched from true to 
+               //value or vice versa.
+               loadLevel(level.MEDIUM);
+            }
+        });
+    mainMenu.add(mediumButton, BorderLayout.CENTER);
+    
+    JButton difficultButton = new JButton("Difficult");
+    difficultButton.addActionListener(new ActionListener()
+        {
+            @Override
+            public void actionPerformed(ActionEvent event)
+            {
+               //When the fruit of veg button is pressed
+               //the setVisible value of the listPanel and
+               //comboPanel is switched from true to 
+               //value or vice versa.
+               loadLevel(level.DIFFICULT);
+            }
+        });
+    mainMenu.add(difficultButton, BorderLayout.LINE_END);
+    
+    mainMenu.setVisible(true);
 }
     
 private void loadLevel(level l)
@@ -63,7 +116,7 @@ private void loadLevel(level l)
 
 public void handleGameOver(HashMap<String,String> results)
 {
-    game.stop();
+    game = null;
     System.out.println("GAME OVER MOTHA FUCKA");
     for(Entry e:results.entrySet())
     {
