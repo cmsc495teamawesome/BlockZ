@@ -39,10 +39,6 @@ public GameMenu()
             @Override
             public void actionPerformed(ActionEvent event)
             {
-               //When the fruit of veg button is pressed
-               //the setVisible value of the listPanel and
-               //comboPanel is switched from true to 
-               //value or vice versa.
                loadLevel(level.EASY);
             }
         });
@@ -54,10 +50,6 @@ public GameMenu()
             @Override
             public void actionPerformed(ActionEvent event)
             {
-               //When the fruit of veg button is pressed
-               //the setVisible value of the listPanel and
-               //comboPanel is switched from true to 
-               //value or vice versa.
                loadLevel(level.MEDIUM);
             }
         });
@@ -69,10 +61,6 @@ public GameMenu()
             @Override
             public void actionPerformed(ActionEvent event)
             {
-               //When the fruit of veg button is pressed
-               //the setVisible value of the listPanel and
-               //comboPanel is switched from true to 
-               //value or vice versa.
                loadLevel(level.DIFFICULT);
             }
         });
