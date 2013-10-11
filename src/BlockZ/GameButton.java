@@ -55,7 +55,7 @@ public class GameButton {
         txt.setQueueBucket(RenderQueue.Bucket.Transparent);
         txt.setSize( 1.2f*height );
         txt.setText(buttonName);
-        txt.move(xPos - .9f*length, yPos + .8f*height, 0.1f);
+        txt.move(xPos + (xPos>0?-1f:1f)*.9f*length, yPos + (yPos>0?-1f:1f)*.8f*height, 0.1f);
         
         buttonFace = new Geometry(buttonName, new Box(Vector3f.ZERO, length, height, 0.1f));        
         buttonFace.setMaterial(greenMat);

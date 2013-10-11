@@ -41,11 +41,11 @@ private void loadLevel(level l)
             break;
         case MEDIUM:
             settings.setResolution(640, 480);
-            game = new GameBoard(7, 9, (float) 1.2);
+            game = new GameBoard(7, 11, (float) 1.2);
             break;
         case DIFFICULT:
             settings.setResolution(960,720);
-            game = new GameBoard(12, 28, (float) 1.2);
+            game = new GameBoard(15, 25, (float) 1.2);
             break;
 
     }

@@ -147,7 +147,7 @@ public class GameBoard extends SimpleApplication {
         
         hud = new GameHUD(this, score, 0, dropRate);
         
-        playHandButton = new GameButton(this, bulletAppState, "Play Hand", 5, -11, 3, 1, true);
+        playHandButton = new GameButton(this, bulletAppState, "Play Hand", 5, (int)(-y/2 - 4), 3, 1, true);
     }
     
     public Geometry makeFace(String name, float x, float y) {
@@ -163,7 +163,7 @@ public class GameBoard extends SimpleApplication {
     public void simpleInitApp() {
         
         //Set camera starting location, increase movement speed
-        cam.setLocation(new Vector3f(0f, 0f, 30f));        
+        cam.setLocation(new Vector3f(0f, 0f, ((x > y) ? x : y) * 2.25f));        
         flyCam.setMoveSpeed(30);   
         
         /*  This is burning my eyes
