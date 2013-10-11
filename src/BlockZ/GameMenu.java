@@ -25,7 +25,7 @@ public GameMenu()
 {
     // TODO: Implement a visual control to present the choice between a few difficulty levels
     
-    loadLevel(level.EASY);
+    loadLevel(level.DIFFICULT);
 }
     
 private void loadLevel(level l)

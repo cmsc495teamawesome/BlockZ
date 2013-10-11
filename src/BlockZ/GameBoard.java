@@ -493,7 +493,7 @@ public class GameBoard extends SimpleApplication {
                 
                 //Test code for removing blocks on click
 
-                if (clickResults.size() > 1)
+                if (clickResults.size() > 2)
                 {
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
                     {
