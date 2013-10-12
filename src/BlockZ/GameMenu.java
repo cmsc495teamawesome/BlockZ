@@ -2,6 +2,8 @@ package BlockZ;
 
 import com.jme3.system.AppSettings;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -34,6 +36,9 @@ public GameMenu()
     mainMenu.setLayout(new BorderLayout());
     
     JButton easyButton = new JButton("Easy");
+    //System.out.println(easyButton.getFont().toString());
+    //easyButton.setFont(new Font());
+    easyButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     easyButton.addActionListener(new ActionListener()
         {
             @Override
@@ -45,6 +50,7 @@ public GameMenu()
     mainMenu.add(easyButton, BorderLayout.LINE_START);
     
     JButton mediumButton = new JButton("Medium");
+    mediumButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     mediumButton.addActionListener(new ActionListener()
         {
             @Override
@@ -56,6 +62,7 @@ public GameMenu()
     mainMenu.add(mediumButton, BorderLayout.CENTER);
     
     JButton difficultButton = new JButton("Difficult");
+    difficultButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     difficultButton.addActionListener(new ActionListener()
         {
             @Override
