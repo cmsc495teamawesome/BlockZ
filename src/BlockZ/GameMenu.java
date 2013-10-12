@@ -44,6 +44,7 @@ public GameMenu()
     try {
         Image img = ImageIO.read(new File("assets/Textures/easy.png"));
         easyButton.setIcon(new ImageIcon(img));
+        easyButton.setText("");
     } catch (IOException ex) {
     }
     easyButton.setFont(easyButton.getFont().deriveFont(40f));
@@ -62,6 +63,7 @@ public GameMenu()
     try {
         Image img = ImageIO.read(new File("assets/Textures/medium.png"));
         mediumButton.setIcon(new ImageIcon(img));
+        mediumButton.setText("");
     } catch (IOException ex) {
     }
     easyButton.setFont(easyButton.getFont().deriveFont(40f));
@@ -80,6 +82,7 @@ public GameMenu()
     try {
         Image img = ImageIO.read(new File("assets/Textures/difficult.png"));
         difficultButton.setIcon(new ImageIcon(img));
+        difficultButton.setText("");
     } catch (IOException ex) {
     }
     easyButton.setFont(easyButton.getFont().deriveFont(40f));
