@@ -105,7 +105,7 @@ private void loadLevel(level l)
 public void handleGameOver(HashMap<String,String> results)
 {
     game = null;
-    System.out.println("GAME OVER MOTHA FUCKA");
+    System.out.println("THE VOLCANO WINS AGAIN!");
     for(Entry e:results.entrySet())
     {
         System.out.println(e.getKey().toString() + " = " + e.getValue().toString());

@@ -45,7 +45,7 @@ public class GameBoard extends SimpleApplication {
     float x, y, z;                      //Board dimensions
     
     int xOffset=5;
-    int dropRate=50;
+    int dropRate=25;
     double time1=System.currentTimeMillis(); 
     
     long score = 0;
@@ -205,8 +205,8 @@ public class GameBoard extends SimpleApplication {
         
         Picture bg = new Picture("background");
         bg.setImage(assetManager, "Textures/background_small.png", false);
-        bg.setWidth(640);
-        bg.setHeight(480);
+        bg.setWidth(settings.getWidth());
+        bg.setHeight(settings.getHeight());
         bg.setPosition(0, 0);
         
         ViewPort pv = renderManager.createPreView("background", cam);
@@ -335,7 +335,6 @@ public class GameBoard extends SimpleApplication {
         for (BeamEffect be : beamList)
         {
             if (!be.isItAlive(tpf)){
-                System.out.println("Removing Beam Geom #" + i);
                 rootNode.detachChild(beamGeomList.get(i));
             }
             
@@ -475,7 +474,6 @@ public class GameBoard extends SimpleApplication {
         for (int j = 0; j < hitObjects.size(); j++){
           
             if (hitObjects.getCollision(j).getGeometry().getName().startsWith("Block")){
-                 System.out.println("Removing block in line"); 
                  getBlock(hitObjects.getCollision(j).getGeometry().getName()).removeBlock();
              }
         }
@@ -529,13 +527,15 @@ public class GameBoard extends SimpleApplication {
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
                     {
                         getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();                       
-                        hud.displayMessage("Clicky clicky.");
+                        hud.displayMessage("Block removed.");
                         score+=10;  //Temporary score to test HUD
+                        updateDropRate(1);
                     }
                     
                     //Test code for detonating explosives on click
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Explo")) {
-                        getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();                             
+                        getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();   
+                        hud.displayMessage("BOOM GOES THE DYNAMITE");
                     }
                 }
 
@@ -543,7 +543,7 @@ public class GameBoard extends SimpleApplication {
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
                     String target = clickResults.getCollision(i).getGeometry().getName();
-                    System.out.println("Hit #" + i + ": " + target);
+                   // System.out.println("Hit #" + i + ": " + target);
                 }
                 
             }

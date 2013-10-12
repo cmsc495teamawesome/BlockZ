@@ -97,13 +97,10 @@ public class BeamEffect{
     
      // Update text fields on HUD
     public boolean isItAlive(float tpf) {
-        
-        System.out.println(name + " time: " + ttlCounter);
-        
+                
         // If countdown timer up, clear message
         if((ttlCounter += tpf) > ttl)
         {
-            System.out.println(name + ": in detach");
             //game.getRootNode().detachChild(beamFace);
             return false;
         }
