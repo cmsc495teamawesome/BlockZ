@@ -493,10 +493,12 @@ public class GameBoard extends SimpleApplication {
             
                 if(clickResults.size()==0) return;
                 
-                if (clickResults.getCollision(1).getGeometry().getName().equals("Play Hand"))
+                for(int i = 0; i < clickResults.size(); i++)
                 {
-                    playHand();
-                    return;
+                    if (clickResults.getCollision(i).getGeometry().getName().equals("Play Hand")) {
+                        playHand();
+                        return;
+                    }
                 }
                 
                 //Test code for removing blocks on click

@@ -31,7 +31,7 @@ public class Laser extends AbstractControl {
     //appear in the SDK properties window and can be edited.
     //Right-click a local variable to encapsulate it with getters and setters.
     private GameBoard game;
-    private static Node LaserZ = new Node("LaserZ");
+    private Node LaserZ;
     private CollisionResult currentTarget;
     private Boolean hasTarget = false;
     
@@ -74,8 +74,14 @@ public class Laser extends AbstractControl {
         
         resizeBeam();
         
+        LaserZ = (Node) game.getRootNode().getChild("LaserZ");
+
+        if (LaserZ == null) {
+            LaserZ = new Node("LaserZ");
+            game.getRootNode().attachChild(LaserZ);
+        }
+        
         LaserZ.attachChild(beam);
-        game.getRootNode().attachChild(LaserZ);
     }
     
     public void setColor(ColorRGBA c)

@@ -21,7 +21,7 @@ import java.util.ArrayList;
  */
 public class Block  {
     
-    public static Node blockNode = new Node("BlockZ");
+    public Node blockNode = null;
     private Node projectileNode = new Node();
     private Node particleNode = new Node();
     
@@ -87,9 +87,17 @@ public class Block  {
         block.setMaterial(mat);
         
         block.setUserData("Value", num);
+        
+        blockNode = (Node) game.getRootNode().getChild("BlockZ");
+        
+        if(blockNode == null)
+        {
+            blockNode = new Node("BlockZ");
+            game.getRootNode().attachChild(blockNode);
+        }
+        
         blockNode.attachChild(block);
         blockNode.attachChild(projectileNode);
-        game.getRootNode().attachChild(blockNode);
         block.setLocalTranslation(pos[0], pos[1], pos[2]);        
         block_phy = new RigidBodyControl(1f);
         block_phy.setMass(mass);        

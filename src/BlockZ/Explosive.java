@@ -20,7 +20,7 @@ import java.util.ArrayList;
  */
 public class Explosive {
     
-    public static Node explosiveNode = new Node("ExplosiveZ");
+    public Node explosiveNode = null;
     private Node projectileNode = new Node();
     
     int size; 
@@ -60,8 +60,16 @@ public class Explosive {
         mat.setColor("Specular",ColorRGBA.White);  
         explosive.setMaterial(mat);
         explosive.setUserData("Value", (n%6)+1);
+        
+        explosiveNode = (Node) game.getRootNode().getChild("ExplosiveZ");
+        
+        if(explosiveNode == null)
+        {
+            explosiveNode = new Node("ExplosiveZ");
+            game.getRootNode().attachChild(explosiveNode);
+        }
+        
         explosiveNode.attachChild(explosive);
-        game.getRootNode().attachChild(explosiveNode);
         explosiveNode.attachChild(projectileNode);
         explosive.setLocalTranslation(pos[0], pos[1], pos[2]);        
         explosive_phy = new RigidBodyControl(1f);
