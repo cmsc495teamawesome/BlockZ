@@ -3,13 +3,18 @@ package BlockZ;
 import com.jme3.system.AppSettings;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
@@ -31,13 +36,17 @@ public GameMenu()
 {
     JFrame mainMenu = new JFrame();
     mainMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    mainMenu.setSize(660, 300);
+    mainMenu.setSize(660, 350);
     mainMenu.setLocation(300, 300);   
     mainMenu.setLayout(new BorderLayout());
     
     JButton easyButton = new JButton("Easy");
-    //System.out.println(easyButton.getFont().toString());
-    //easyButton.setFont(new Font());
+    try {
+        Image img = ImageIO.read(new File("assets/Textures/easy.png"));
+        easyButton.setIcon(new ImageIcon(img));
+    } catch (IOException ex) {
+    }
+    easyButton.setFont(easyButton.getFont().deriveFont(40f));
     easyButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     easyButton.addActionListener(new ActionListener()
         {
@@ -50,6 +59,12 @@ public GameMenu()
     mainMenu.add(easyButton, BorderLayout.LINE_START);
     
     JButton mediumButton = new JButton("Medium");
+    try {
+        Image img = ImageIO.read(new File("assets/Textures/medium.png"));
+        mediumButton.setIcon(new ImageIcon(img));
+    } catch (IOException ex) {
+    }
+    easyButton.setFont(easyButton.getFont().deriveFont(40f));
     mediumButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     mediumButton.addActionListener(new ActionListener()
         {
@@ -62,6 +77,12 @@ public GameMenu()
     mainMenu.add(mediumButton, BorderLayout.CENTER);
     
     JButton difficultButton = new JButton("Difficult");
+    try {
+        Image img = ImageIO.read(new File("assets/Textures/difficult.png"));
+        difficultButton.setIcon(new ImageIcon(img));
+    } catch (IOException ex) {
+    }
+    easyButton.setFont(easyButton.getFont().deriveFont(40f));
     difficultButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     difficultButton.addActionListener(new ActionListener()
         {
