@@ -55,6 +55,8 @@ public class GameBoard extends SimpleApplication {
     
     int blockIdent=0;
     int explosiveIdent=0;
+ 
+    int beamCount = 0;
     
     Random rand;
     
@@ -64,6 +66,8 @@ public class GameBoard extends SimpleApplication {
     ArrayList<Long> detonatedTime;    
     ArrayList<Block> blockParticleList;
     ArrayList<Long> blockParticleTime;
+    ArrayList<BeamEffect> beamList;
+    ArrayList<Geometry> beamGeomList;
     
     //Create GameButtons
     private GameButton playHandButton;
@@ -182,6 +186,8 @@ public class GameBoard extends SimpleApplication {
         detonatedTime = new ArrayList();
         blockParticleList = new ArrayList();
         blockParticleTime = new ArrayList();
+        beamList = new ArrayList();
+        beamGeomList = new ArrayList();
         
         //Add lighting to the scene, direction to be tweaked
         DirectionalLight sun = new DirectionalLight();
@@ -324,6 +330,18 @@ public class GameBoard extends SimpleApplication {
             }
             
         }
+        
+        int i = 0;
+        for (BeamEffect be : beamList)
+        {
+            if (!be.isItAlive(tpf)){
+                System.out.println("Removing Beam Geom #" + i);
+                rootNode.detachChild(beamGeomList.get(i));
+            }
+            
+            i++;
+        }
+        
         // Update HUD stats and display
         hud.updateScore(score);
         hud.updateRate(dropRate);
@@ -445,7 +463,12 @@ public class GameBoard extends SimpleApplication {
         // Aim the ray from x1 to x2
         Ray ray = new Ray(new Vector3f(x1, y1, 0), dir);
         
-          
+        // Create beam to show ray to user
+        BeamEffect beam = new BeamEffect(this, x1, y1, x2, y2, orientation, beamCount);
+        beamList.add(beam);
+        beamGeomList.add(beam.getGeom());
+        rootNode.attachChild(beamGeomList.get(beamCount));
+        beamCount++;  
         // Collect intersections between ray and all nodes in results list.
         rootNode.collideWith(ray, hitObjects);
            
