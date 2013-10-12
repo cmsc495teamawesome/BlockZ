@@ -19,6 +19,8 @@ import com.jme3.scene.Spatial;
 import com.jme3.scene.control.AbstractControl;
 import com.jme3.scene.control.Control;
 import java.io.IOException;
+import com.jme3.math.FastMath;
+import com.jme3.scene.Node;
 
 /**
  * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
@@ -27,27 +29,41 @@ import java.io.IOException;
  * @version 0.1 
  */
 
-public class BeamEffect extends AbstractControl{
+public class BeamEffect{
     
     private GameBoard game;
-    private BulletAppState physicsSpace;
+    //private BulletAppState physicsSpace;
     private float x1, y1, x2, y2;
-    private float beamCount;
     private static Geometry beamFace;
-    private float beamTime = 1.0f;
+    private float ttl = 1.0f;
+    private float ttlCounter = 0.0f;
     private Material whiteMat;
+    private String orientation;
+    private String name;
+    private float length;
+    private int beamID;
+    //private static int beamCount = 0;
+    //private static Node beamNode = new Node();
     
-    
-    BeamEffect(GameBoard g, BulletAppState physicsIn, float x1In, float y1In, float x2In, float y2In)
+    BeamEffect(GameBoard g, float x1In, float y1In, float x2In, float y2In, String orientIn, int beamCount)
     {
+        //beamCount++;
         game = g;
-        physicsSpace = physicsIn;
+        //physicsSpace = physicsIn;
         whiteMat = new Material(g.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
         whiteMat.setColor("Color", ColorRGBA.White);
         x1 = x1In;
         y1 = y1In;
+        x2 = x2In;
+        y2 = y2In;
+        beamID = beamCount;
+        orientation = orientIn;
+        name = "Beam" + beamCount;
         
-        //Temporarily draw squares at beam ends. To be replaced with connecting beam
+        Vector3f point1 = new Vector3f(x1, y1, 0.0f);
+        Vector3f point2 = new Vector3f(x2, y2, 0.0f);
+        length = point1.distance(point2);
+        /*Temporarily draw squares at beam ends. To be replaced with connecting beam
         beamFace = new Geometry("beam", new Box(Vector3f.ZERO, 0.2f, 0.2f, 0.1f));        
         beamFace.setMaterial(whiteMat);
         beamFace.move(x1, y1, 0.0f);
@@ -56,54 +72,43 @@ public class BeamEffect extends AbstractControl{
         beamFace = new Geometry("beam", new Box(Vector3f.ZERO, 0.2f, 0.2f, 0.1f));        
         beamFace.setMaterial(whiteMat);
         beamFace.move(x2, y2, 0.0f);
-        game.getRootNode().attachChild(beamFace);
+        game.getRootNode().attachChild(beamFace);*/
         
+        
+        //Draw beam across gameboard between (x1, y1) and (x2, y2)
+        if (orientation.equals("horizontal")){
+            beamFace = new Geometry(name, new Box(Vector3f.ZERO, length/2, 0.1f, 0.1f));
+            beamFace.setMaterial(whiteMat);
+            beamFace.move(game.xOffset, (y2+y1)/2, 2.0f);
+            beamFace.rotate(0.0f, 0.0f, (float)FastMath.atan((y2-((y1+y2)/2))/(x2-game.xOffset)));
+            //game.getRootNode().attachChild(beamFace);
+        }
+        
+        if (orientation.equals("vertical")){
+            beamFace = new Geometry(name, new Box(Vector3f.ZERO, 0.1f, length/2, 0.1f));
+            beamFace.setMaterial(whiteMat);
+            beamFace.move((x1+x2)/2.0f,(y1+y2)/2.0f,2.0f);
+            beamFace.rotate(0.0f, 0.0f, (float)FastMath.atan(-1*(x2-((x1+x2)/2))/(y2-(y1+y2)/2)));
+            //game.getRootNode().attachChild(beamFace);
+        }
+        
+        //game.getRootNode().attachChild(beamNode);
     }
     
      // Update text fields on HUD
-    @Override
-    protected void controlUpdate(float tpf) {
-        
+    public boolean isItAlive(float tpf) {
+                
         // If countdown timer up, clear message
-        if((beamCount += tpf) > beamTime)
+        if((ttlCounter += tpf) > ttl)
         {
-            removeBeam();
-            beamCount -= beamTime;
+            //game.getRootNode().detachChild(beamFace);
+            return false;
         }
-        
-        
+        return true;
     }
     
-    
-    @Override
-    protected void controlRender(RenderManager rm, ViewPort vp) {
-        //Only needed for rendering-related operations,
-        //not called when spatial is culled.
+    public Geometry getGeom(){
+        return beamFace;
     }
     
-    public Control cloneForSpatial(Spatial spatial) {
-        BeamEffect control = new BeamEffect(game, physicsSpace, x1, y1, x2, y2);
-        //TODO: copy parameters to new Control
-        control.setSpatial(spatial);
-        return control;
-    }
-   
-    @Override
-    public void read(JmeImporter im) throws IOException {
-        super.read(im);
-        //InputCapsule in = im.getCapsule(this);
-        //TODO: load properties of this Control, e.g.
-        //this.value = in.readFloat("name", defaultValue);
-    }
-    
-    @Override
-    public void write(JmeExporter ex) throws IOException {
-        super.write(ex);
-        //OutputCapsule out = ex.getCapsule(this);
-        //TODO: save properties of this Control, e.g.
-        //out.write(this.value, "name", defaultValue);
-    }
-    
-    void removeBeam(){
-    }
 }

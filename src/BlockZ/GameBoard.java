@@ -45,7 +45,7 @@ public class GameBoard extends SimpleApplication {
     float x, y, z;                      //Board dimensions
     
     int xOffset=5;
-    int dropRate=50;
+    int dropRate=25;
     double time1=System.currentTimeMillis(); 
     
     long score = 0;
@@ -55,6 +55,8 @@ public class GameBoard extends SimpleApplication {
     
     int blockIdent=0;
     int explosiveIdent=0;
+ 
+    int beamCount = 0;
     
     Random rand;
     
@@ -64,6 +66,8 @@ public class GameBoard extends SimpleApplication {
     ArrayList<Long> detonatedTime;    
     ArrayList<Block> blockParticleList;
     ArrayList<Long> blockParticleTime;
+    ArrayList<BeamEffect> beamList;
+    ArrayList<Geometry> beamGeomList;
     
     //Create GameButtons
     private GameButton playHandButton;
@@ -182,6 +186,8 @@ public class GameBoard extends SimpleApplication {
         detonatedTime = new ArrayList();
         blockParticleList = new ArrayList();
         blockParticleTime = new ArrayList();
+        beamList = new ArrayList();
+        beamGeomList = new ArrayList();
         
         //Add lighting to the scene, direction to be tweaked
         DirectionalLight sun = new DirectionalLight();
@@ -199,8 +205,8 @@ public class GameBoard extends SimpleApplication {
         
         Picture bg = new Picture("background");
         bg.setImage(assetManager, "Textures/background_small.png", false);
-        bg.setWidth(640);
-        bg.setHeight(480);
+        bg.setWidth(settings.getWidth());
+        bg.setHeight(settings.getHeight());
         bg.setPosition(0, 0);
         
         ViewPort pv = renderManager.createPreView("background", cam);
@@ -324,6 +330,17 @@ public class GameBoard extends SimpleApplication {
             }
             
         }
+        
+        int i = 0;
+        for (BeamEffect be : beamList)
+        {
+            if (!be.isItAlive(tpf)){
+                rootNode.detachChild(beamGeomList.get(i));
+            }
+            
+            i++;
+        }
+        
         // Update HUD stats and display
         hud.updateScore(score);
         hud.updateRate(dropRate);
@@ -445,14 +462,18 @@ public class GameBoard extends SimpleApplication {
         // Aim the ray from x1 to x2
         Ray ray = new Ray(new Vector3f(x1, y1, 0), dir);
         
-          
+        // Create beam to show ray to user
+        BeamEffect beam = new BeamEffect(this, x1, y1, x2, y2, orientation, beamCount);
+        beamList.add(beam);
+        beamGeomList.add(beam.getGeom());
+        rootNode.attachChild(beamGeomList.get(beamCount));
+        beamCount++;  
         // Collect intersections between ray and all nodes in results list.
         rootNode.collideWith(ray, hitObjects);
            
         for (int j = 0; j < hitObjects.size(); j++){
           
             if (hitObjects.getCollision(j).getGeometry().getName().startsWith("Block")){
-                 System.out.println("Removing block in line"); 
                  getBlock(hitObjects.getCollision(j).getGeometry().getName()).removeBlock();
              }
         }
@@ -508,13 +529,15 @@ public class GameBoard extends SimpleApplication {
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Block"))
                     {
                         getBlock(clickResults.getCollision(2).getGeometry().getName()).removeBlock();                       
-                        hud.displayMessage("Clicky clicky.");
+                        hud.displayMessage("Block removed.");
                         score+=10;  //Temporary score to test HUD
+                        updateDropRate(1);
                     }
                     
                     //Test code for detonating explosives on click
                     if (clickResults.getCollision(2).getGeometry().getName().substring(0, 5).equals("Explo")) {
-                        getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();                             
+                        getExplosive(clickResults.getCollision(2).getGeometry().getName()).explode();   
+                        hud.displayMessage("BOOM GOES THE DYNAMITE");
                     }
                 }
 
@@ -522,7 +545,7 @@ public class GameBoard extends SimpleApplication {
                 for (int i = 0; i < clickResults.size(); i++) {
                     // Display object name
                     String target = clickResults.getCollision(i).getGeometry().getName();
-                    System.out.println("Hit #" + i + ": " + target);
+                   // System.out.println("Hit #" + i + ": " + target);
                 }
                 
             }

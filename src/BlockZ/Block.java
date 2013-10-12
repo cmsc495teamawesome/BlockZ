@@ -199,7 +199,7 @@ public class Block  {
     }
     
     public boolean checkForGameOver(float tpf){
-        if (    (block_phy.getPhysicsLocation().y >= game.y*9/10) & 
+        if (    (block_phy.getPhysicsLocation().y >= game.y*8.5/10) & 
                 ((block_phy.getLinearVelocity().y <= game.GAME_OVER_MOVE_THRESHHOLD) &
                  (block_phy.getLinearVelocity().y >= -game.GAME_OVER_MOVE_THRESHHOLD))){
             gameOverTimer += tpf;
