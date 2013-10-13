@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package BlockZ;
 
 import com.jme3.bullet.control.RigidBodyControl;
@@ -26,7 +22,7 @@ import com.jme3.scene.Node;
  * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
  * 
- * @version 0.1 
+ * @version 1.0 
  */
 
 public class BeamEffect{

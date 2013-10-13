@@ -2,13 +2,13 @@ package BlockZ;
 
 import com.jme3.system.AppSettings;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -17,10 +17,14 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 /**
     @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
+ * 
+ * @version 1.0
  */
 public class GameMenu{
     
@@ -34,7 +38,7 @@ private GameBoard game = null;
 
 public GameMenu()
 {
-    JFrame mainMenu = new JFrame();
+    JFrame mainMenu = new JFrame("Main Menu - Level Selection");
     mainMenu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     mainMenu.setSize(660, 350);
     mainMenu.setLocation(300, 300);   
@@ -136,15 +140,39 @@ private void loadLevel(level l)
 public void handleGameOver(HashMap<String,String> results)
 {
     game = null;
-    System.out.println("THE VOLCANO WINS AGAIN!");
+    
+    JFrame gameOverWindow = new JFrame("GAME OVER");
+    gameOverWindow.setSize(720, 550);
+    gameOverWindow.setLocation(250, 250);
+    gameOverWindow.setBackground(Color.BLACK);
+
+    JPanel bigPane = new JPanel();
+    //bigPane.setBackground(Color.BLACK);
+    bigPane.setLayout(new BorderLayout());
+    gameOverWindow.add(bigPane);
+    
+    JPanel resultsPanel = new JPanel();
+    
     for(Entry e:results.entrySet())
     {
-        System.out.println(e.getKey().toString() + " = " + e.getValue().toString());
+        JLabel resultLabel = new JLabel(e.getKey().toString() + " = " + e.getValue().toString());
+        resultLabel.setFont(resultLabel.getFont().deriveFont(20f));
+        resultLabel.setForeground(Color.RED);
+        resultsPanel.add(resultLabel);
     }
     
-    // TODO: Display the information in a pretty thing on the screen.
+    bigPane.add(resultsPanel, BorderLayout.NORTH);
     
-    // TODO: After "Game Over" screen, link them back to the main menu.
+    JLabel resultsLabel = new JLabel();
+    bigPane.add(resultsLabel);
+    
+    JLabel backLabel = new JLabel(new ImageIcon("assets/Textures/background_small.png"));
+    backLabel.setPreferredSize(gameOverWindow.getSize());
+    bigPane.add(backLabel, BorderLayout.SOUTH);
+    
+    gameOverWindow.setVisible(true);
+    
+    System.out.println("THE VOLCANO WINS AGAIN!");
 }
 
 public static void main(String[] args) {

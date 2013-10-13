@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package BlockZ;
 
 import com.jme3.export.JmeExporter;
@@ -22,7 +18,7 @@ import com.jme3.font.BitmapFont;
  * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
  * 
- * @version 0.1 
+ * @version 1.0
  */
 public class GameHUD extends AbstractControl {
     //Any local variables should be encapsulated by getters/setters so they

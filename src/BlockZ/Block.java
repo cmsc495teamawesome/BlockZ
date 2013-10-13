@@ -18,6 +18,8 @@ import java.util.ArrayList;
 /**
  * @author Team B - Bowes, R.J., Samonds, G., and Scuderi, M. 
  * CMSC495-6380 Professor Hung Dao
+ * 
+ * @version 1.0
  */
 public class Block  {
     
