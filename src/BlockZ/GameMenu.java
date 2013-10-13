@@ -46,7 +46,7 @@ public GameMenu()
     
     JButton easyButton = new JButton("Easy");
     try {
-        Image img = ImageIO.read(new File("assets/Textures/easy.png"));
+        Image img = ImageIO.read(new File("assets/images/easy.png"));
         easyButton.setIcon(new ImageIcon(img));
         easyButton.setText("");
     } catch (IOException ex) {
@@ -65,12 +65,12 @@ public GameMenu()
     
     JButton mediumButton = new JButton("Medium");
     try {
-        Image img = ImageIO.read(new File("assets/Textures/medium.png"));
+        Image img = ImageIO.read(new File("assets/images/medium.png"));
         mediumButton.setIcon(new ImageIcon(img));
         mediumButton.setText("");
     } catch (IOException ex) {
     }
-    easyButton.setFont(easyButton.getFont().deriveFont(40f));
+    mediumButton.setFont(easyButton.getFont().deriveFont(40f));
     mediumButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     mediumButton.addActionListener(new ActionListener()
         {
@@ -84,12 +84,12 @@ public GameMenu()
     
     JButton difficultButton = new JButton("Difficult");
     try {
-        Image img = ImageIO.read(new File("assets/Textures/difficult.png"));
+        Image img = ImageIO.read(new File("assets/images/difficult.png"));
         difficultButton.setIcon(new ImageIcon(img));
         difficultButton.setText("");
     } catch (IOException ex) {
     }
-    easyButton.setFont(easyButton.getFont().deriveFont(40f));
+    difficultButton.setFont(easyButton.getFont().deriveFont(40f));
     difficultButton.setPreferredSize(new Dimension(mainMenu.getSize().width/3, mainMenu.getSize().height) );
     difficultButton.addActionListener(new ActionListener()
         {
@@ -166,7 +166,7 @@ public void handleGameOver(HashMap<String,String> results)
     JLabel resultsLabel = new JLabel();
     bigPane.add(resultsLabel);
     
-    JLabel backLabel = new JLabel(new ImageIcon("assets/Textures/background_small.png"));
+    JLabel backLabel = new JLabel(new ImageIcon("assets/images/background_small.png"));
     backLabel.setPreferredSize(gameOverWindow.getSize());
     bigPane.add(backLabel, BorderLayout.SOUTH);
     

@@ -112,9 +112,16 @@ public class Laser extends AbstractControl {
         else 
         {
             //CHANGED
-            if (currentTarget.getGeometry().getName() == "Projectile") {return 0;}
+            if (currentTarget.getGeometry().getName() == "Projectile") 
+            {
+                return 0;
+            }
             else
-            return currentTarget.getGeometry().getUserData("Value");
+            {
+                int ret;
+                ret = (Integer) currentTarget.getGeometry().getUserData("Value");
+                return ret;
+            }
         }
     }
     
